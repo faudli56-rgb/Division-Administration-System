@@ -5,17 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام شعبة الرعاية الاجتماعية | تسجيل الدخول</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --navy: #0A192F;
-            --navy-light: #112240;
+            --navy-light: #172A45;
             --gold: #D4AF37;
+            --gold-bright: #FDE047;
             --white: #FFFFFF;
-            --bg-light: #F8F9FA;
-            --text-dark: #1A202C;
-            --text-muted: #718096;
+            --bg-light: #F0F4F8;
+            --text-dark: #050F1A;
+            --text-muted: #334155;
             --font-heading: 'Cairo', sans-serif;
             --font-body: 'Tajawal', sans-serif;
         }
@@ -25,9 +26,8 @@
         body {
             font-family: var(--font-body);
             background-color: var(--bg-light);
-            /* نقش خفيف جداً يضيف فخامة للون الفاتح */
-            background-image: radial-gradient(#E2E8F0 1px, transparent 1px);
-            background-size: 20px 20px;
+            background-image: radial-gradient(#CBD5E1 1px, transparent 1px);
+            background-size: 24px 24px;
             color: var(--text-dark);
             min-height: 100vh;
             display: flex;
@@ -40,111 +40,129 @@
 
         @keyframes fadeIn { to { opacity: 1; } }
 
-        /* ================ الحاوية الرئيسية (البطاقة البيضاء) ================ */
+        /* ================ الحاوية الرئيسية بظل أنيق ================ */
         .login-card {
             background-color: var(--white);
             width: 92%;
             max-width: 480px;
-            padding: 40px 30px;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(10, 25, 47, 0.08);
-            border-top: 6px solid var(--navy);
+            padding: 45px 35px;
+            border-radius: 20px;
+            /* ظل متعدد الطبقات لعمق فخم */
+            box-shadow: 0 20px 50px rgba(10, 25, 47, 0.12), 0 0 0 1px rgba(10, 25, 47, 0.03);
+            border-top: 6px solid var(--gold);
             text-align: center;
             position: relative;
             margin: 20px 0;
         }
 
-        /* ================ الشعار ================ */
+        /* ================ الشعار بظل ناعم ================ */
         .logo-container {
             margin-bottom: 25px;
         }
 
         .logo-container img {
-            width: 220px; /* تم تكبير الشعار بشكل بارز */
+            width: 240px; /* تكبير الشعار بشكل بارز */
             height: auto;
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1));
+            filter: drop-shadow(0 12px 15px rgba(0,0,0,0.15));
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-container img:hover {
+            transform: scale(1.02);
         }
 
-        /* ================ النصوص والعناوين ================ */
+        /* ================ النصوص بخطوط عريضة وزاهية ================ */
         .org-title {
             font-family: var(--font-heading);
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             color: var(--text-muted);
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 5px;
             letter-spacing: 0.5px;
         }
 
         .system-title {
             font-family: var(--font-heading);
-            font-size: 2.1rem;
+            font-size: 2.3rem;
             color: var(--navy);
-            font-weight: 800;
+            font-weight: 900; /* وزن ثقيل للوضوح التام */
             margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(10, 25, 47, 0.05);
         }
 
         .welcome-msg {
-            font-size: 0.95rem;
+            font-size: 1.05rem;
             color: var(--text-muted);
+            font-weight: 600;
             line-height: 1.7;
             margin-bottom: 30px;
             padding: 0 10px;
         }
 
-        /* ================ الحقول والأزرار ================ */
+        /* ================ الحقول بخلفية زاهية ================ */
         .login-form {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 20px;
         }
 
         .input-group input {
             width: 100%;
-            padding: 16px;
-            background-color: #F7FAFC;
-            border: 1px solid #E2E8F0;
-            border-radius: 10px;
+            padding: 18px;
+            background-color: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
             color: var(--navy);
             font-family: var(--font-body);
-            font-size: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
             text-align: center;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             outline: none;
         }
 
         .input-group input::placeholder {
-            color: #A0AEC0;
+            color: #94A3B8;
+            font-weight: 600;
         }
 
         .input-group input:focus {
             background-color: var(--white);
             border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+            transform: translateY(-2px);
         }
 
+        /* ================ الزر الكحلي الفخم ================ */
         .btn-submit {
-            background-color: var(--navy);
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
             color: var(--gold);
             font-family: var(--font-heading);
-            font-weight: 700;
-            font-size: 1.25rem;
+            font-weight: 800;
+            font-size: 1.3rem;
             border: none;
-            padding: 16px;
-            border-radius: 10px;
+            padding: 18px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(10, 25, 47, 0.15);
+            box-shadow: 0 10px 25px rgba(10, 25, 47, 0.25);
             margin-top: 5px;
+            letter-spacing: 0.5px;
         }
 
         .btn-submit:hover {
-            background-color: var(--navy-light);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(10, 25, 47, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(10, 25, 47, 0.35);
+            color: var(--gold-bright);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(10, 25, 47, 0.2);
         }
 
         .btn-submit:disabled {
-            background-color: #CBD5E0;
+            background: #CBD5E0;
             color: #718096;
             cursor: not-allowed;
             transform: none;
@@ -153,26 +171,33 @@
 
         /* ================ التذييل ================ */
         .footer-info {
-            margin-top: 25px;
-            font-size: 0.8rem;
-            color: #A0AEC0;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #64748B;
+            font-weight: 600;
             line-height: 1.8;
         }
 
         .dev-signature {
-            margin-top: 15px;
+            margin-top: 20px;
             padding-top: 15px;
-            border-top: 1px solid #EDF2F7;
-            font-size: 0.85rem;
+            border-top: 2px solid #F1F5F9;
+            font-size: 0.9rem;
             color: var(--text-muted);
+            font-weight: 600;
         }
 
         .dev-signature a {
             color: var(--navy);
-            font-weight: bold;
+            font-weight: 800;
             text-decoration: none;
             direction: ltr;
             display: inline-block;
+            transition: color 0.3s;
+        }
+
+        .dev-signature a:hover {
+            color: var(--gold);
         }
 
         /* ================ الإشعارات ================ */
@@ -181,10 +206,12 @@
             z-index: 10000; display: flex; flex-direction: column; gap: 10px;
         }
         .toast {
-            background: var(--navy); color: var(--white); padding: 12px 24px;
-            border-radius: 8px; font-family: var(--font-body); font-weight: 500;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px;
-            animation: slideDown 0.4s ease-out;
+            background: var(--navy); color: var(--white); padding: 15px 25px;
+            border-radius: 10px; font-family: var(--font-body); font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 12px;
+            animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-right: 5px solid var(--gold);
         }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -238,7 +265,9 @@
             const toast = document.createElement('div');
             toast.className = 'toast';
             const icon = type === 'success' ? '✔' : '⚠️';
-            toast.innerHTML = `<span style="color:${type==='success'?'#D4AF37':'#E63946'}; font-size:1.2rem;">${icon}</span> <span>${message}</span>`;
+            // تغيير لون الأيقونة في التنبيه ليتناسب مع التصميم
+            toast.style.borderRightColor = type === 'success' ? '#D4AF37' : '#E63946';
+            toast.innerHTML = `<span style="color:${type==='success'?'#D4AF37':'#E63946'}; font-size:1.3rem;">${icon}</span> <span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
