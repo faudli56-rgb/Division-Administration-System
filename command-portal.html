@@ -16,7 +16,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: var(--font-body); background-color: var(--gray-light); color: var(--navy-dark); display: flex; flex-direction: column; min-height: 100vh;}
 
-        /* ================ رأس الصفحة (Header) والقائمة الجانبية ================ */
+        /* ================ رأس الصفحة والقائمة الجانبية ================ */
         header { background-color: var(--navy-dark); color: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--gold); position: sticky; top: 0; z-index: 100; }
         .header-right { display: flex; align-items: center; gap: 15px; }
         .menu-btn { background: transparent; border: none; color: var(--gold); font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; }
@@ -24,7 +24,6 @@
         .header-title span { font-size: 0.8rem; color: #ccc; }
         .btn-logout { background-color: var(--danger); color: var(--white); border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-family: var(--font-body); font-weight: bold; font-size: 0.9rem;}
 
-        /* القائمة الجانبية المنسدلة */
         .sidebar-overlay { position: fixed; top: 0; right: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; opacity: 0; transition: opacity 0.3s; }
         .sidebar { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background-color: var(--navy-dark); border-left: 2px solid var(--gold); z-index: 1000; transition: right 0.3s ease; padding-top: 60px; box-shadow: -5px 0 15px rgba(0,0,0,0.2); }
         .sidebar.open { right: 0; }
@@ -51,26 +50,34 @@
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         th, td { padding: 15px; text-align: right; border-bottom: 1px solid #eee; }
         th { background-color: var(--gray-light); font-family: var(--font-heading); color: var(--navy-dark); }
-        .btn-generate { background-color: var(--gold); color: var(--navy-dark); border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-generate { background-color: var(--gold); color: var(--navy-dark); border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; display: inline-block; text-decoration: none;}
         .btn-generate:hover { background-color: var(--gold-hover); }
 
-        /* أزرار التبويبات (الوارد/الأرشيف) */
         .tabs-header { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .tab-btn { background: transparent; border: none; font-size: 1.1rem; font-family: var(--font-heading); font-weight: bold; color: #64748B; cursor: pointer; padding: 5px 10px; }
         .tab-btn.active { color: var(--navy-dark); border-bottom: 3px solid var(--gold); }
 
-        /* ================ المتابعة والتذكير ================ */
+        /* ================ النوافذ المنبثقة (Modals) ================ */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; overflow-y: auto; padding: 20px 0;}
+        .modal-content { background: white; width: 92%; max-width: 700px; margin: 20px auto; padding: 25px; border-radius: 12px; border-top: 5px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        .modal-content label { display: block; font-weight: bold; margin: 10px 0 5px; color: var(--navy-dark); }
+        .modal-content textarea, .modal-content input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-family: var(--font-body); margin-bottom: 10px; }
+        .modal-content textarea { min-height: 90px; resize: vertical; }
+
+        /* ================ المتابعة والتذكير والتصدير ================ */
         .danger-box { background-color: var(--white); border: 1px solid #eee; border-right: 5px solid var(--danger); padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .btn-share { background-color: #25D366; color: white; display: inline-block; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; text-align: center; width: 100%; margin-top: 15px;}
+        .btn-share { background-color: #25D366; color: white; display: inline-block; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; text-align: center; margin-top: 15px;}
+        #download-links { display: none; margin-top: 20px; background-color: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.2);}
+        .download-btn { display: inline-block; padding: 10px 20px; border-radius: 6px; margin: 5px; font-weight: bold; color: var(--white); text-decoration: none; }
         
-        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 2000; font-size: 1.5rem; font-weight: bold; color: var(--navy-dark); }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 4000; font-size: 1.5rem; font-weight: bold; color: var(--navy-dark); }
     </style>
 </head>
 <body>
 
-    <div class="loading-overlay" id="global-loader">جاري تهيئة مساحة القيادة...</div>
+    <div class="loading-overlay" id="global-loader">جاري تهيئة النظام...</div>
 
-    <!-- ================ القائمة الجانبية (Sidebar) ================ -->
+    <!-- القائمة الجانبية -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
     <div class="sidebar" id="sidebar">
         <button class="close-sidebar" onclick="toggleMenu()">✖</button>
@@ -78,11 +85,11 @@
         <a href="#" onclick="showPage('tracking')" id="link-tracking">📋 متابعة الإدارات</a>
         <a href="#" onclick="showPage('inbox')" id="link-inbox">📥 الوارد (أخر 24 ساعة)</a>
         <a href="#" onclick="showPage('achievements')" id="link-achievements" style="color: var(--gold);">⭐ إنجازاتي (الرئاسة)</a>
-        <a href="#" onclick="showPage('approvals')" id="link-approvals" style="color: #2A9D8F;">✅ اعتماد الإنجازات الداخلية</a>
+        <a href="#" onclick="showPage('approvals')" id="link-approvals" style="color: #2A9D8F;">✅ اعتماد الإنجازات</a>
         <a href="#" onclick="showPage('export')" id="link-export">📄 استخراج الموقف الرسمي</a>
     </div>
 
-    <!-- ================ رأس الصفحة ================ -->
+    <!-- رأس الصفحة -->
     <header>
         <div class="header-right">
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
@@ -96,23 +103,19 @@
 
     <div class="container">
         
-        <!-- ==================== الصفحة 1: الرئيسية (مختصرة) ==================== -->
+        <!-- ==================== الصفحة 1: الرئيسية ==================== -->
         <div id="page-home" class="page-section active">
             <div class="stats-grid">
-                <!-- الضغط هنا ينقل لصفحة المتابعة -->
                 <div class="stat-card" onclick="showPage('tracking')">
                     <div><h3>الإدارات التي رفعت الموقف</h3>
                     <div class="num" id="submitted-count">0 <span style="font-size:1rem; color:#64748B;">/ <span id="total-depts">0</span></span></div></div>
                     <div style="font-size: 2.5rem; color: var(--success);">📋</div>
                 </div>
-                
-                <!-- الضغط هنا ينقل لصفحة الوارد -->
                 <div class="stat-card" onclick="showPage('inbox')">
                     <div><h3>إجمالي التقارير الواردة</h3>
                     <div class="num" id="total-reports">0</div></div>
                     <div style="font-size: 2.5rem;">📥</div>
                 </div>
-
                 <div class="stat-card">
                     <div><h3>تاريخ اليوم</h3><div class="num" style="font-size: 1.2rem;" id="today-date">--</div></div>
                     <div style="font-size: 2.5rem;">📅</div>
@@ -129,7 +132,7 @@
             </div>
         </div>
 
-        <!-- ==================== الصفحة 3: الوارد (والأرشيف) ==================== -->
+        <!-- ==================== الصفحة 3: الوارد والأرشيف ==================== -->
         <div id="page-inbox" class="page-section">
             <div class="tabs-header">
                 <button class="tab-btn active" onclick="switchInboxTab('recent')" id="tab-recent">آخر التقارير (24 ساعة)</button>
@@ -145,7 +148,7 @@
             </div>
         </div>
 
-        <!-- ==================== الصفحة 4: استخراج الموقف (كما كانت) ==================== -->
+        <!-- ==================== الصفحة 4: استخراج الموقف (شغالة 100%) ==================== -->
         <div id="page-export" class="page-section">
             <div class="table-container" style="background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-light) 100%); color: white;">
                 <h2 style="font-family: var(--font-heading); color: var(--gold); margin-bottom: 20px;">استخراج تقرير الموقف</h2>
@@ -153,39 +156,72 @@
                     <div style="flex:1;"><label>من تاريخ:</label><input type="date" id="startDate" style="width:100%; padding:10px; border-radius:5px; border:none;"></div>
                     <div style="flex:1;"><label>إلى تاريخ:</label><input type="date" id="endDate" style="width:100%; padding:10px; border-radius:5px; border:none;"></div>
                 </div>
-                <label>اسم الملف:</label>
-                <input type="text" id="customFileName" style="width: 100%; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; font-weight:bold;">
-                <button class="btn-generate" style="width: 100%;" onclick="generateReport()">⚙️ دمج واستخراج التقرير الرسمي</button>
+                <label>اسم الملف (يمكنك التعديل):</label>
+                <input type="text" id="customFileName" style="width: 100%; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; font-weight:bold; color: var(--navy-dark);">
+                <button class="btn-generate" id="generateBtn" style="width: 100%; font-size:1.1rem; padding:15px;" onclick="generateReport()">⚙️ دمج واستخراج التقرير الرسمي</button>
+                
+                <!-- روابط التحميل تظهر هنا -->
+                <div id="download-links">
+                    <h3 style="margin-bottom: 15px; color: var(--gold);">✔ تم تجهيز الموقف بنجاح</h3>
+                    <a href="#" target="_blank" class="download-btn" style="background:#E63946;" id="link-pdf">📥 تحميل PDF</a>
+                    <a href="#" target="_blank" class="download-btn" style="background:#2A9D8F;" id="link-word">📝 تحميل Word</a>
+                    <a href="#" target="_blank" class="download-btn" style="background:#219ebc;" id="link-excel">📊 تحميل الخسائر</a>
+                    <br><br>
+                    <a href="#" class="btn-share" onclick="shareToApp()">📲 مشاركة الموقف (WhatsApp)</a>
+                </div>
             </div>
         </div>
 
-        <!-- ==================== الصفحة 5: إنجازاتي (قريباً) ==================== -->
+        <!-- ==================== الصفحة 5: إنجازات الرئاسة ==================== -->
         <div id="page-achievements" class="page-section">
-            <div class="table-container" style="text-align: center; padding: 50px;">
-                <div style="font-size: 4rem;">⭐</div>
-                <h2 style="font-family: var(--font-heading); color: var(--navy-dark); margin: 15px 0;">نافذة إنجازات الرئاسة</h2>
-                <p style="color: #64748B;">هنا سيتم إضافة وتعديل إنجازات الرئاسة لترتبط تلقائياً بالموقف النهائي.<br> (جاري تجهيز الواجهة البرمجية في الخطوة القادمة)</p>
+            <h2 style="font-family: var(--font-heading); margin-bottom: 15px; color: var(--navy-dark);">⭐ إضافة إنجازات الرئاسة</h2>
+            <div class="table-container">
+                <input type="text" id="ach_title" placeholder="عنوان الإنجاز" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;">
+                <textarea id="ach_desc" placeholder="تفاصيل الإنجاز..." style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px; min-height:80px;"></textarea>
+                <button class="btn-generate" onclick="addPresidencyAchievement()" id="btn-add-ach">➕ إضافة الإنجاز</button>
+            </div>
+            
+            <h3 style="margin-top:20px; font-family: var(--font-heading);">سجل إنجازات الرئاسة</h3>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>التاريخ</th><th>العنوان</th><th>التفاصيل</th><th>إجراء</th></tr></thead>
+                    <tbody id="presidency-achievements-body">
+                        <tr><td colspan="4" style="text-align:center;">(يتطلب تحديث كود Google Script لجلب البيانات)</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- ==================== الصفحة 6: الاعتماد (قريباً) ==================== -->
+        <!-- ==================== الصفحة 6: اعتماد الإنجازات ==================== -->
         <div id="page-approvals" class="page-section">
-            <div class="table-container" style="text-align: center; padding: 50px;">
-                <div style="font-size: 4rem; color: #2A9D8F;">✅</div>
-                <h2 style="font-family: var(--font-heading); color: var(--navy-dark); margin: 15px 0;">اعتماد الإنجازات الداخلية للمندوبين</h2>
-                <p style="color: #64748B;">هنا ستصلك إنجازات الإدارات الداخلية لتقوم بمراجعتها (اعتماد - رفض - أرشفة).<br> (جاري تجهيز الواجهة البرمجية في الخطوة القادمة)</p>
+            <h2 style="font-family: var(--font-heading); margin-bottom: 15px; color: var(--navy-dark);">✅ اعتماد الإنجازات الداخلية</h2>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>الجهة</th><th>عنوان الإنجاز</th><th>التفاصيل</th><th>إجراءات</th></tr></thead>
+                    <tbody id="pending-achievements-body">
+                        <tr><td colspan="4" style="text-align:center;">(يتطلب تحديث كود Google Script لجلب البيانات)</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
     </div>
 
-    <!-- نافذة تعديل التقرير (Modal) -->
-    <div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:3000;">
-        <!-- ... (محتوى المودال السابق نفسه لتعديل المهام والتحركات) ... يمكنك إضافته هنا كالمعتاد -->
-        <div style="background:white; width:90%; max-width:600px; margin:50px auto; padding:20px; border-radius:10px;">
-            <h3 style="margin-bottom:15px; border-bottom:2px solid var(--gold); padding-bottom:10px;">تعديل التقرير</h3>
-            <p>سيتم نقل كود المودال لاحقاً هنا، لكي لا نزحم الكود الآن.</p>
-            <button class="btn-generate" onclick="document.getElementById('editModal').style.display='none'">إغلاق</button>
+    <!-- ==================== نافذة التعديل والتفاصيل (Modal) ==================== -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2 id="editTitle" style="color: var(--navy-dark); margin-bottom: 15px; border-bottom: 2px solid var(--gold); padding-bottom: 10px;">تفاصيل وتعديل التقرير</h2>
+            <label>المهام:</label><textarea id="e_tasks"></textarea>
+            <label>التحركات:</label><textarea id="e_movements"></textarea>
+            <label>الحوادث:</label><textarea id="e_incidents"></textarea>
+            <label>الزيارات:</label><textarea id="e_visits"></textarea>
+            <label>المطالب:</label><textarea id="e_demands"></textarea>
+            <label>ملاحظات:</label><textarea id="e_notes"></textarea>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-generate" onclick="saveEdit()" id="saveBtn" style="flex:1;">💾 حفظ التعديلات</button>
+                <button class="btn-generate" onclick="document.getElementById('editModal').style.display='none'" style="flex:1; background:#ccc; color:#333;">إلغاء وإغلاق</button>
+            </div>
         </div>
     </div>
 
@@ -201,49 +237,36 @@
         document.getElementById('admin-name').innerText = userData.jobTitle + " | " + userData.name;
         
         let allReportsData = []; 
+        let editingReportId = null; 
+        let finalPdfUrl = "";
 
-        // ==================== دوال الواجهة والتنقل (UI Logic) ====================
-        
-        // فتح وإغلاق القائمة الجانبية
+        // ==================== الواجهة والتنقل ====================
         function toggleMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('open');
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
         }
 
-        // التنقل بين الصفحات (بدون إعادة تحميل)
         function showPage(pageId) {
-            // إخفاء كل الصفحات
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
-            // إظهار الصفحة المطلوبة
             document.getElementById('page-' + pageId).classList.add('active');
-            
-            // تحديث لون الرابط النشط في القائمة
             document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active-link'));
             document.getElementById('link-' + pageId).classList.add('active-link');
-            
-            // إغلاق القائمة بعد الاختيار (في الجوال)
             if(window.innerWidth <= 768) { toggleMenu(); }
         }
 
-        // التبديل بين الوارد الجديد والأرشيف
         function switchInboxTab(tab) {
             document.getElementById('tab-recent').classList.remove('active');
             document.getElementById('tab-archive').classList.remove('active');
             document.getElementById('tab-' + tab).classList.add('active');
-            
-            // هنا سنضيف لاحقاً منطق فلترة الجدول (عرض آخر 24 ساعة فقط أو الكل)
             renderTable(allReportsData, tab); 
         }
 
-        // ==================== دوال جلب البيانات ====================
-        
+        // ==================== جلب وتوزيع البيانات ====================
         function updateDefaultFileName() {
             const d = new Date();
             const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
             document.getElementById('today-date').innerText = d.toLocaleDateString('ar-SA');
-            document.getElementById('customFileName').value = `الموقف اليومي لشعبة الرعاية الاجتماعية ليوم ${days[d.getDay()]} بتاريخ. ${d.toLocaleDateString('en-GB')}`;
+            document.getElementById('customFileName').value = `الموقف اليومي لشعبة الرعاية الاجتماعية ليوم ${days[d.getDay()]} بتاريخ ${d.toLocaleDateString('en-GB')}`;
             const iso = d.toISOString().split('T')[0];
             document.getElementById('startDate').value = iso; document.getElementById('endDate').value = iso;
         }
@@ -260,7 +283,7 @@
                     allReportsData = result.reports;
                     
                     renderTracking(result.departmentsStatus);
-                    renderTable(result.reports, 'recent'); // افتراضياً نعرض الحديث فقط
+                    renderTable(result.reports, 'recent');
                 } else { 
                     alert(result.message); if(result.message.includes('جلسة')) logout(); 
                 }
@@ -270,7 +293,6 @@
         function renderTracking(depts) {
             const cont = document.getElementById('missing-list'); 
             cont.innerHTML = '';
-            
             let submitted = 0;
             depts.forEach(d => {
                 if(d.submitted) submitted++;
@@ -278,47 +300,100 @@
                 const icon = d.submitted ? '✔' : '❌';
                 cont.innerHTML += `<div style="color:${color}; margin-bottom:8px; font-weight:bold;">${icon} ${d.jobTitle}</div>`;
             });
-            
-            // تحديث إحصائيات الصفحة الرئيسية
             document.getElementById('total-depts').innerText = depts.length;
             document.getElementById('submitted-count').innerText = submitted;
 
             const missing = depts.filter(d => !d.submitted).map(d => d.jobTitle);
             if (missing.length > 0) {
-                const msg = `تذكير هام للإدارات التالية: \n${missing.join('، ')} \n\nيرجى سرعة رفع الموقف اليومي عبر النظام.`;
-                cont.innerHTML += `<a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" class="btn-share">📢 إرسال تذكير واتساب للمتأخرين</a>`;
+                const msg = `تذكير هام للإدارات التالية: \n${missing.join('، ')} \n\nيرجى سرعة رفع الموقف اليومي.`;
+                cont.innerHTML += `<a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" class="btn-share">📢 تذكير واتساب للمتأخرين</a>`;
             } else {
-                cont.innerHTML += `<p style="color:green; font-weight:bold; margin-top:10px;">✔ تم استلام جميع التقارير بنجاح.</p>`;
+                cont.innerHTML += `<p style="color:green; font-weight:bold; margin-top:10px;">✔ تم استلام جميع التقارير.</p>`;
             }
         }
 
         function renderTable(reports, filterType) {
             const tbody = document.getElementById('table-body'); 
             tbody.innerHTML = '';
-            
-            // فلترة التقارير (إذا كان recent نعرض فقط آخر 24 ساعة)
             const now = new Date();
             let displayReports = reports;
             
             if(filterType === 'recent') {
-                displayReports = reports.filter(rep => {
-                    const repDate = new Date(rep.date);
-                    const hoursDiff = Math.abs(now - repDate) / 36e5;
-                    return hoursDiff <= 24; // عرض ما هو أقل من 24 ساعة فقط
-                });
+                displayReports = reports.filter(rep => (Math.abs(now - new Date(rep.date)) / 36e5) <= 24);
             }
 
             if (displayReports.length === 0) { 
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">لا توجد تقارير في هذه القائمة</td></tr>'; 
-                return; 
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">لا توجد تقارير</td></tr>'; return; 
             }
             
             displayReports.slice(0, 50).forEach(rep => {
-                const dateObj = new Date(rep.date);
+                const dObj = new Date(rep.date);
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${rep.reportId}</td><td>${dateObj.toLocaleDateString('ar-SA')} - ${dateObj.toLocaleTimeString('ar-SA')}</td><td>${rep.jobTitle}</td><td><button class="btn-generate" style="padding: 5px 15px; font-size: 0.9rem;" onclick="openEdit('${rep.reportId}')">✏️ تفاصيل</button></td>`;
+                tr.innerHTML = `<td>${rep.reportId}</td><td>${dObj.toLocaleDateString('ar-SA')} ${dObj.toLocaleTimeString('ar-SA')}</td><td>${rep.jobTitle}</td>
+                <td><button class="btn-generate" style="padding: 6px 12px; font-size: 0.9rem;" onclick="openEdit('${rep.reportId}')">✏️ تفاصيل وتعديل</button></td>`;
                 tbody.appendChild(tr);
             });
+        }
+
+        // ==================== التعديل والتفاصيل ====================
+        function openEdit(id) {
+            const r = allReportsData.find(x => x.reportId === id);
+            editingReportId = id;
+            document.getElementById('editTitle').innerText = 'تفاصيل تقرير: ' + r.jobTitle;
+            document.getElementById('e_tasks').value = r.tasks; document.getElementById('e_movements').value = r.movements;
+            document.getElementById('e_incidents').value = r.incidents; document.getElementById('e_visits').value = r.visits;
+            document.getElementById('e_demands').value = r.demands; document.getElementById('e_notes').value = r.notes;
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        async function saveEdit() {
+            document.getElementById('saveBtn').innerText = 'جاري الحفظ...';
+            const payload = { tasks: document.getElementById('e_tasks').value, movements: document.getElementById('e_movements').value, incidents: document.getElementById('e_incidents').value, visits: document.getElementById('e_visits').value, demands: document.getElementById('e_demands').value, notes: document.getElementById('e_notes').value };
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'editReport', token: token, reportId: editingReportId, payload: payload }) });
+            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('saveBtn').innerText = '💾 حفظ التعديلات';
+            fetchDashboardData();
+        }
+
+        // ==================== استخراج الموقف (التصدير) ====================
+        async function generateReport() {
+            const start = document.getElementById('startDate').value; const end = document.getElementById('endDate').value;
+            const btn = document.getElementById('generateBtn'); const linksDiv = document.getElementById('download-links');
+            if (!start || !end) { alert('يرجى تحديد تواريخ البداية والنهاية'); return; }
+            btn.innerHTML = 'جاري دمج التقارير... ⏳'; btn.disabled = true; linksDiv.style.display = 'none';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST', body: JSON.stringify({ action: 'generatePeriodicReport', token: token, startDate: start, endDate: end, customFileName: document.getElementById('customFileName').value })
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    document.getElementById('link-pdf').href = result.links.pdf;
+                    document.getElementById('link-word').href = result.links.word;
+                    document.getElementById('link-excel').href = result.links.excel;
+                    finalPdfUrl = result.links.pdf;
+                    linksDiv.style.display = 'block'; btn.innerHTML = '⚙️ إعادة إنشاء التقرير';
+                } else { alert(result.message); btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي'; }
+            } catch (error) { alert('حدث خطأ أثناء إنشاء التقرير.'); btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي'; }
+            btn.disabled = false;
+        }
+
+        function shareToApp() {
+            const fileName = document.getElementById('customFileName').value;
+            if (navigator.share) { navigator.share({ title: fileName, text: "مرفق الموقف المجمع:", url: finalPdfUrl }).catch(console.error); } 
+            else { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent("مرفق الموقف المجمع: " + finalPdfUrl)}`); }
+        }
+
+        // ==================== الإنجازات والاعتماد (تجهيز الأزرار للخطوة القادمة) ====================
+        async function addPresidencyAchievement() {
+            const title = document.getElementById('ach_title').value;
+            const desc = document.getElementById('ach_desc').value;
+            if(!title || !desc) { alert('يرجى ملء كافة الحقول'); return; }
+            
+            document.getElementById('btn-add-ach').innerText = 'جاري الإضافة...';
+            // هنا سيتم استدعاء السيرفر (Google Apps Script) بمجرد برمجته في الخطوة القادمة
+            alert('تم تصميم الواجهة بنجاح! سنقوم في الخطوة القادمة ببرمجة Google Script لكي يحفظ هذه الإنجازات ويعرضها.');
+            document.getElementById('btn-add-ach').innerText = '➕ إضافة الإنجاز';
         }
 
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
