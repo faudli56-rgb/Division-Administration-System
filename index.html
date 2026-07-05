@@ -216,6 +216,57 @@
             border-right: 5px solid var(--gold);
         }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        /* ================ تعديلات مخصصة لشاشات الجوال لظهور الصفحة كاملة ================ */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .login-card {
+                padding: 25px 15px; /* تقليل الحواف الداخلية */
+                margin: 0;
+                width: 100%;
+            }
+            .logo-container {
+                margin-bottom: 10px; /* تقليل المسافة تحت الشعار */
+            }
+            .logo-container img {
+                width: 150px; /* تصغير الشعار ليتناسب مع شاشة الجوال */
+            }
+            .org-title {
+                font-size: 1rem;
+                margin-bottom: 0;
+            }
+            .system-title {
+                margin-bottom: 10px;
+            }
+            .welcome-msg {
+                font-size: 0.85rem;
+                margin-bottom: 15px;
+                line-height: 1.5;
+            }
+            .login-form {
+                gap: 12px; /* تقليل المسافة بين الحقول */
+            }
+            .input-group input {
+                padding: 12px; /* تصغير ارتفاع الحقول */
+                font-size: 1rem;
+            }
+            .btn-submit {
+                padding: 12px; /* تصغير ارتفاع الزر */
+                font-size: 1.1rem;
+                margin-top: 0;
+            }
+            .footer-info {
+                margin-top: 15px;
+                font-size: 0.75rem;
+                line-height: 1.5;
+            }
+            .dev-signature {
+                margin-top: 10px;
+                padding-top: 10px;
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>
