@@ -8,208 +8,64 @@
     
     <style>
         :root {
-            --navy-dark: #0A192F;
-            --navy-light: #112240;
-            --gold: #D4AF37;
-            --gold-hover: #F3E5AB;
-            --white: #FFFFFF;
-            --gray-light: #F3F4F6;
-            --danger: #E63946;
-            --success: #2A9D8F;
-            --font-heading: 'Cairo', sans-serif;
-            --font-body: 'Tajawal', sans-serif;
+            --navy-dark: #0A192F; --navy-light: #112240; --gold: #D4AF37; --gold-hover: #F3E5AB;
+            --white: #FFFFFF; --gray-light: #F3F4F6; --danger: #E63946; --success: #2A9D8F;
+            --font-heading: 'Cairo', sans-serif; --font-body: 'Tajawal', sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: var(--font-body);
-            background-color: var(--gray-light);
-            color: var(--navy-dark);
-        }
+        body { font-family: var(--font-body); background-color: var(--gray-light); color: var(--navy-dark); display: flex; flex-direction: column; min-height: 100vh;}
 
-        /* ================= الترويسة ================= */
-        header {
-            background-color: var(--navy-dark);
-            color: var(--white);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 4px solid var(--gold);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-title h1 {
-            font-family: var(--font-heading);
-            font-size: 1.4rem;
-            color: var(--gold);
-            margin-bottom: 5px;
-        }
-        
+        header { background-color: var(--navy-dark); color: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--gold); position: sticky; top: 0; z-index: 100; }
+        .header-title h1 { font-family: var(--font-heading); font-size: 1.4rem; color: var(--gold); margin-bottom: 5px; }
         .header-title span { font-size: 0.9rem; color: #ccc; }
+        .btn-logout { background-color: var(--danger); color: var(--white); border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-family: var(--font-body); font-weight: bold; }
 
-        .btn-logout {
-            background-color: var(--danger);
-            color: var(--white);
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: var(--font-body);
-            font-weight: bold;
-        }
-
-        /* ================= المحتوى الأساسي ================= */
-        .container {
-            padding: 20px;
-            max-width: 1200px;
-            margin: auto;
-        }
-
-        /* بطاقات الإحصائيات */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background-color: var(--white);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border-right: 4px solid var(--navy-dark);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        .container { padding: 20px; max-width: 1200px; margin: auto; flex: 1; width: 100%;}
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background-color: var(--white); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-right: 4px solid var(--navy-dark); display: flex; justify-content: space-between; align-items: center; }
         .stat-card h3 { font-size: 1rem; color: #666; margin-bottom: 10px; }
         .stat-card .num { font-size: 2rem; font-weight: bold; font-family: var(--font-heading); color: var(--navy-dark); }
 
-        /* قسم توليد التقارير */
-        .export-section {
-            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-light) 100%);
-            padding: 25px;
-            border-radius: 10px;
-            color: var(--white);
-            margin-bottom: 30px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        .export-section h2 {
-            font-family: var(--font-heading);
-            color: var(--gold);
-            margin-bottom: 20px;
-        }
-
-        .date-picker-group {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .date-input {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .date-input label { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        /* إضافات القيادة الجديدة */
+        .danger-box { background-color: #ffe3e3; border-right: 5px solid var(--danger); padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+        .missing-dept { color: var(--danger); font-weight: bold; display: inline-block; margin-left: 10px; }
+        .btn-share { background-color: #25D366; color: white; display: inline-block; margin-top: 15px; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; width: 100%; transition: 0.3s;}
+        .btn-share:hover { background-color: #1EBE55; }
         
-        .date-input input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            border: none;
-            font-family: var(--font-body);
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto;}
+        .modal-content { background: white; width: 90%; max-width: 800px; margin: 40px auto; padding: 20px; border-radius: 8px; border-top: 4px solid var(--gold);}
+        .modal-content textarea { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; font-family: var(--font-body); resize: vertical; min-height: 80px;}
+        .modal-content label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--navy-dark);}
 
-        .btn-generate {
-            background-color: var(--gold);
-            color: var(--navy-dark);
-            border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            width: 100%;
-        }
-
+        .export-section { background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-light) 100%); padding: 25px; border-radius: 10px; color: var(--white); margin-bottom: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .export-section h2 { font-family: var(--font-heading); color: var(--gold); margin-bottom: 20px; }
+        .date-picker-group { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .date-input { flex: 1; min-width: 200px; }
+        .date-input label { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .date-input input { width: 100%; padding: 10px; border-radius: 6px; border: none; font-family: var(--font-body); }
+        .btn-generate { background-color: var(--gold); color: var(--navy-dark); border: none; padding: 12px 30px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; }
         .btn-generate:hover { background-color: var(--gold-hover); transform: translateY(-2px); }
         .btn-generate:disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
 
-        /* أزرار التحميل */
-        #download-links {
-            display: none;
-            margin-top: 20px;
-            background-color: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .download-btn {
-            display: inline-block;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            margin: 5px;
-            font-weight: bold;
-            color: var(--white);
-            transition: 0.3s;
-        }
-
-        .btn-pdf { background-color: #E63946; }
-        .btn-word { background-color: #2A9D8F; }
-        .btn-excel { background-color: #219ebc; }
+        #download-links { display: none; margin-top: 20px; background-color: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center; }
+        .download-btn { display: inline-block; text-decoration: none; padding: 10px 20px; border-radius: 4px; margin: 5px; font-weight: bold; color: var(--white); transition: 0.3s; }
+        .btn-pdf { background-color: #E63946; } .btn-word { background-color: #2A9D8F; } .btn-excel { background-color: #219ebc; }
         .download-btn:hover { opacity: 0.8; }
 
-        /* جدول التقارير الواردة */
-        .table-container {
-            background-color: var(--white);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            overflow-x: auto;
-        }
-
+        .table-container { background-color: var(--white); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #eee; }
+        th { background-color: var(--gray-light); font-family: var(--font-heading); color: var(--navy-dark); }
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; background-color: #e9ecef; color: #495057; }
+
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; font-size: 1.5rem; font-weight: bold; color: var(--navy-dark); }
         
-        th, td {
-            padding: 15px;
-            text-align: right;
-            border-bottom: 1px solid #eee;
-        }
-
-        th {
-            background-color: var(--gray-light);
-            font-family: var(--font-heading);
-            color: var(--navy-dark);
-        }
-
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            background-color: #e9ecef;
-            color: #495057;
-        }
-
-        /* الإشعارات والشاشات المؤقتة */
-        .loading-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.9); display: flex;
-            justify-content: center; align-items: center;
-            z-index: 1000; font-size: 1.5rem; font-weight: bold; color: var(--navy-dark);
-        }
+        /* حقوق المطور */
+        .dev-footer { background-color: #E2E8F0; text-align: center; padding: 15px; font-size: 0.9rem; color: var(--navy-dark); margin-top: auto; border-top: 1px solid #CBD5E1; }
+        .dev-footer a { color: #25D366; text-decoration: none; font-weight: bold; direction: ltr; display: inline-block; }
     </style>
 </head>
 <body>
@@ -225,60 +81,51 @@
     </header>
 
     <div class="container">
-        <!-- الإحصائيات -->
+        
+        <!-- قسم المندوبين المتأخرين -->
+        <div class="danger-box" id="missing-box" style="display:none;">
+            <h3 style="color: var(--danger); margin-top: 0;">⚠️ إدارات لم ترفع الموقف اليومي بعد:</h3>
+            <div id="missing-list"></div>
+        </div>
+
         <div class="stats-grid">
             <div class="stat-card">
-                <div>
-                    <h3>إجمالي التقارير</h3>
-                    <div class="num" id="total-reports">0</div>
-                </div>
+                <div><h3>إجمالي التقارير</h3><div class="num" id="total-reports">0</div></div>
                 <div style="font-size: 2rem;">📊</div>
             </div>
             <div class="stat-card">
-                <div>
-                    <h3>تاريخ اليوم</h3>
-                    <div class="num" style="font-size: 1.2rem;" id="today-date">--</div>
-                </div>
+                <div><h3>تاريخ اليوم</h3><div class="num" style="font-size: 1.2rem;" id="today-date">--</div></div>
                 <div style="font-size: 2rem;">📅</div>
             </div>
         </div>
 
-        <!-- منطقة استخراج الموقف (الدمج) -->
         <div class="export-section">
             <h2>استخراج تقرير الموقف (يومي / دوري)</h2>
             <div class="date-picker-group">
-                <div class="date-input">
-                    <label>من تاريخ:</label>
-                    <input type="date" id="startDate" required>
-                </div>
-                <div class="date-input">
-                    <label>إلى تاريخ:</label>
-                    <input type="date" id="endDate" required>
-                </div>
+                <div class="date-input"><label>من تاريخ:</label><input type="date" id="startDate" required></div>
+                <div class="date-input"><label>إلى تاريخ:</label><input type="date" id="endDate" required></div>
             </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight:bold;">اسم الملف (يمكنك التعديل):</label>
+                <input type="text" id="customFileName" style="width: 100%; padding: 12px; border-radius: 6px; border: none; font-family: var(--font-body); font-weight: bold; color: var(--navy-dark);" value="">
+            </div>
+
             <button class="btn-generate" id="generateBtn" onclick="generateReport()">⚙️ دمج واستخراج التقرير الرسمي</button>
 
-            <!-- روابط التحميل تظهر هنا -->
             <div id="download-links">
                 <h3 style="margin-bottom: 15px; color: var(--gold);">✔ تم تجهيز الموقف بنجاح</h3>
                 <a href="#" target="_blank" class="download-btn btn-pdf" id="link-pdf">📥 تحميل PDF</a>
                 <a href="#" target="_blank" class="download-btn btn-word" id="link-word">📝 تحميل Word</a>
-                <a href="#" target="_blank" class="download-btn btn-excel" id="link-excel">📊 تحميل كشوفات الخسائر (Excel)</a>
+                <a href="#" target="_blank" class="download-btn btn-excel" id="link-excel">📊 تحميل كشوفات الخسائر</a>
+                <a href="#" class="btn-share" onclick="shareToApp()">📲 مشاركة الموقف مباشرة (WhatsApp)</a>
             </div>
         </div>
 
-        <!-- جدول التقارير الواردة -->
         <div class="table-container">
             <h2 style="font-family: var(--font-heading); margin-bottom: 20px;">التقارير الواردة مؤخراً</h2>
             <table>
-                <thead>
-                    <tr>
-                        <th>رقم التقرير</th>
-                        <th>التاريخ والوقت</th>
-                        <th>الجهة المرسلة (المنصب)</th>
-                        <th>الحالة</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>رقم التقرير</th><th>التاريخ والوقت</th><th>الجهة المرسلة</th><th>إجراء</th></tr></thead>
                 <tbody id="table-body">
                     <tr><td colspan="4" style="text-align: center;">جاري جلب البيانات...</td></tr>
                 </tbody>
@@ -286,135 +133,142 @@
         </div>
     </div>
 
+    <!-- نافذة تعديل التقرير -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2 id="editTitle" style="color: var(--navy-dark); margin-bottom: 15px; border-bottom: 2px solid var(--gold); padding-bottom: 10px;">تعديل التقرير</h2>
+            <label>المهام:</label><textarea id="e_tasks"></textarea>
+            <label>التحركات:</label><textarea id="e_movements"></textarea>
+            <label>الحوادث:</label><textarea id="e_incidents"></textarea>
+            <label>الزيارات:</label><textarea id="e_visits"></textarea>
+            <label>المطالب:</label><textarea id="e_demands"></textarea>
+            <label>ملاحظات:</label><textarea id="e_notes"></textarea>
+            <button class="btn-generate" onclick="saveEdit()" id="saveBtn" style="margin-top: 15px;">حفظ التعديلات</button>
+            <button class="btn-generate" onclick="document.getElementById('editModal').style.display='none'" style="background:#ccc; margin-top:10px;">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- توقيع المطور -->
+    <div class="dev-footer">
+        تم تطوير النظام من قبل: <strong>فؤاد العميسي</strong> | 
+        <a href="https://wa.me/967777644293" target="_blank" title="تواصل عبر واتساب">📞 777644293</a>
+    </div>
+
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbwmvcuZXQDaSl-c7HTYv493U1CbaV5WXkjgu7XYn8UstyBETcXdh_r_Mo8udfzjT-ozvw/exec";
         
-        // 1. التحقق من الأمان
         const token = sessionStorage.getItem('token');
         const userDataString = sessionStorage.getItem('userData');
-
-        if (!token || !userDataString) {
-            window.location.href = 'index.html';
-        }
+        if (!token || !userDataString) window.location.href = 'index.html';
 
         const userData = JSON.parse(userDataString);
+        if (userData.role !== 'Admin') { alert('ليس لديك صلاحية.'); window.location.href = 'entry-portal.html'; }
+
+        document.getElementById('admin-name').innerText = userData.jobTitle + " | " + userData.name;
         
-        // منع المندوبين من الدخول لهذه الصفحة
-        if (userData.role !== 'Admin') {
-            alert('ليس لديك صلاحية لدخول بوابة القيادة.');
-            window.location.href = 'entry-portal.html';
+        let allReportsData = [];
+        let editingReportId = null;
+        let finalPdfUrl = "";
+
+        function updateDefaultFileName() {
+            const d = new Date();
+            const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+            document.getElementById('today-date').innerText = d.toLocaleDateString('ar-SA');
+            document.getElementById('customFileName').value = `الموقف اليومي لشعبة الرعاية الاجتماعية ليوم ${days[d.getDay()]} خلال 24 ساعة الماضية بتاريخ. ${d.toLocaleDateString('en-GB')}`;
+            
+            const iso = d.toISOString().split('T')[0];
+            document.getElementById('startDate').value = iso; document.getElementById('endDate').value = iso;
         }
 
-        // إعداد الواجهة
-        document.getElementById('admin-name').innerText = userData.jobTitle + " | " + userData.name;
-        document.getElementById('today-date').innerText = new Date().toLocaleDateString('ar-SA');
-        
-        // تعيين تاريخ اليوم كافتراضي في الحقول
-        const todayStr = new Date().toISOString().split('T')[0];
-        document.getElementById('startDate').value = todayStr;
-        document.getElementById('endDate').value = todayStr;
-
-        // 2. جلب بيانات اللوحة
         async function fetchDashboardData() {
+            updateDefaultFileName();
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'getDashboardData', token: token })
-                });
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getDashboardData', token: token }) });
                 const result = await response.json();
 
                 if (result.status === 'success') {
                     document.getElementById('global-loader').style.display = 'none';
                     document.getElementById('total-reports').innerText = result.reports.length;
+                    allReportsData = result.reports;
+                    
+                    if(result.missing && result.missing.length > 0) {
+                        document.getElementById('missing-box').style.display = 'block';
+                        document.getElementById('missing-list').innerHTML = result.missing.map(m => `<span class="missing-dept">● ${m}</span>`).join('');
+                    } else {
+                        document.getElementById('missing-box').style.display = 'none';
+                    }
                     
                     renderTable(result.reports);
                 } else {
-                    alert(result.message);
-                    if(result.message.includes('جلسة')) logout();
+                    alert(result.message); if(result.message.includes('جلسة')) logout();
                 }
-            } catch (error) {
-                alert('خطأ في الاتصال بالخادم.');
-            }
+            } catch (error) { alert('خطأ في الاتصال بالخادم.'); }
         }
 
-        // عرض الجدول
         function renderTable(reports) {
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = '';
-            
-            if (reports.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">لا توجد تقارير واردة</td></tr>';
-                return;
-            }
-
-            reports.slice(0, 50).forEach(rep => { // عرض آخر 50 تقرير فقط لسرعة الأداء
+            const tbody = document.getElementById('table-body'); tbody.innerHTML = '';
+            if (reports.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">لا توجد تقارير واردة</td></tr>'; return; }
+            reports.slice(0, 50).forEach(rep => {
                 const dateObj = new Date(rep.date);
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td style="font-family: monospace;">${rep.reportId}</td>
                     <td>${dateObj.toLocaleDateString('ar-SA')} - ${dateObj.toLocaleTimeString('ar-SA')}</td>
                     <td>${rep.jobTitle}</td>
-                    <td><span class="status-badge">${rep.status}</span></td>
+                    <td><button class="btn-generate" style="padding: 5px 15px; font-size: 0.9rem; width: auto;" onclick="openEdit('${rep.reportId}')">✏️ تعديل</button></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // 3. طلب توليد التقرير المدمج
+        function openEdit(id) {
+            const r = allReportsData.find(x => x.reportId === id);
+            editingReportId = id;
+            document.getElementById('editTitle').innerText = 'تعديل تقرير: ' + r.jobTitle;
+            document.getElementById('e_tasks').value = r.tasks; document.getElementById('e_movements').value = r.movements;
+            document.getElementById('e_incidents').value = r.incidents; document.getElementById('e_visits').value = r.visits;
+            document.getElementById('e_demands').value = r.demands; document.getElementById('e_notes').value = r.notes;
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        async function saveEdit() {
+            document.getElementById('saveBtn').innerText = 'جاري الحفظ...';
+            const payload = { tasks: document.getElementById('e_tasks').value, movements: document.getElementById('e_movements').value, incidents: document.getElementById('e_incidents').value, visits: document.getElementById('e_visits').value, demands: document.getElementById('e_demands').value, notes: document.getElementById('e_notes').value };
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'editReport', token: token, reportId: editingReportId, payload: payload }) });
+            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('saveBtn').innerText = 'حفظ التعديلات';
+            fetchDashboardData();
+        }
+
         async function generateReport() {
-            const start = document.getElementById('startDate').value;
-            const end = document.getElementById('endDate').value;
-            const btn = document.getElementById('generateBtn');
-            const linksDiv = document.getElementById('download-links');
-
-            if (!start || !end) {
-                alert('يرجى تحديد تواريخ البداية والنهاية');
-                return;
-            }
-
-            btn.innerHTML = 'جاري دمج التقارير وإنشاء الملفات... يرجى الانتظار ⏳';
-            btn.disabled = true;
-            linksDiv.style.display = 'none';
+            const start = document.getElementById('startDate').value; const end = document.getElementById('endDate').value;
+            const btn = document.getElementById('generateBtn'); const linksDiv = document.getElementById('download-links');
+            if (!start || !end) { alert('يرجى تحديد تواريخ البداية والنهاية'); return; }
+            btn.innerHTML = 'جاري دمج التقارير وإنشاء الملفات... يرجى الانتظار ⏳'; btn.disabled = true; linksDiv.style.display = 'none';
 
             try {
                 const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'generatePeriodicReport',
-                        token: token,
-                        startDate: start,
-                        endDate: end
-                    })
+                    method: 'POST', body: JSON.stringify({ action: 'generatePeriodicReport', token: token, startDate: start, endDate: end, customFileName: document.getElementById('customFileName').value })
                 });
-                
                 const result = await response.json();
-
                 if (result.status === 'success') {
-                    // تفعيل الروابط وإظهارها
                     document.getElementById('link-pdf').href = result.links.pdf;
                     document.getElementById('link-word').href = result.links.word;
                     document.getElementById('link-excel').href = result.links.excel;
-                    
-                    linksDiv.style.display = 'block';
-                    btn.innerHTML = '⚙️ إعادة إنشاء التقرير';
-                } else {
-                    alert(result.message);
-                    btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي';
-                }
-            } catch (error) {
-                alert('حدث خطأ أثناء إنشاء التقرير. قد يستغرق الأمر وقتاً أطول بسبب حجم البيانات.');
-                btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي';
-            }
+                    finalPdfUrl = result.links.pdf;
+                    linksDiv.style.display = 'block'; btn.innerHTML = '⚙️ إعادة إنشاء التقرير';
+                } else { alert(result.message); btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي'; }
+            } catch (error) { alert('حدث خطأ أثناء إنشاء التقرير.'); btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي'; }
             btn.disabled = false;
         }
 
-        // 4. تسجيل الخروج
-        function logout() {
-            sessionStorage.clear();
-            window.location.href = 'index.html';
+        function shareToApp() {
+            const fileName = document.getElementById('customFileName').value;
+            if (navigator.share) { navigator.share({ title: fileName, text: "مرفق الموقف المجمع:", url: finalPdfUrl }).catch(console.error); } 
+            else { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent("مرفق الموقف المجمع: " + finalPdfUrl)}`); }
         }
 
-        // تشغيل الجلب عند فتح الصفحة
+        function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
         window.onload = fetchDashboardData;
     </script>
 </body>
