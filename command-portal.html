@@ -84,10 +84,9 @@
         
         <!-- قسم المندوبين المتأخرين -->
         <div class="danger-box" id="missing-box" style="display:none;">
-            <h3 style="color: var(--danger); margin-top: 0;">⚠️ إدارات لم ترفع الموقف اليومي بعد:</h3>
-            <div id="missing-list"></div>
-        </div>
-
+    <h3 style="color: var(--danger); margin-top: 0;">⚠️ حالة رفع الموقف اليومي للإدارات:</h3>
+    <div id="missing-list" style="margin-top: 10px; font-size: 1.1rem;"></div>
+</div>
         <div class="stats-grid">
             <div class="stat-card">
                 <div><h3>إجمالي التقارير</h3><div class="num" id="total-reports">0</div></div>
@@ -270,6 +269,30 @@
 
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
         window.onload = fetchDashboardData;
+        function renderTracking(depts) {
+    const cont = document.getElementById('missing-list'); 
+    if (!cont) return;
+    
+    // إظهار المربع دائماً في صفحة القيادة
+    document.getElementById('missing-box').style.display = 'block';
+    cont.innerHTML = '';
+    
+    // عرض حالة جميع الإدارات (أخضر للمرسل، أحمر للمتأخر)
+    depts.forEach(d => {
+        const color = d.submitted ? 'green' : 'red';
+        const icon = d.submitted ? '✔' : '❌';
+        cont.innerHTML += `<div style="color:${color}; margin-bottom:5px; font-weight:bold;">${icon} ${d.jobTitle}</div>`;
+    });
+
+    // تجهيز زر التذكير للمتأخرين فقط (يظهر إذا وجد متأخر واحد على الأقل)
+    const missing = depts.filter(d => !d.submitted).map(d => d.jobTitle);
+    if (missing.length > 0) {
+        const msg = `تذكير هام للإدارات التالية: \n${missing.join('، ')} \n\nيرجى سرعة رفع الموقف اليومي عبر النظام.`;
+        cont.innerHTML += `<br><a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" class="btn-share" style="background:#25D366; text-decoration:none; color:white; padding:10px; border-radius:5px; display:inline-block; margin-top:10px;">📢 إرسال تذكير واتساب للمتأخرين فقط</a>`;
+    } else {
+        cont.innerHTML += `<br><p style="color:green; font-weight:bold; margin-top:10px;">✔ تم استلام جميع التقارير اليوم بنجاح.</p>`;
+    }
+}
     </script>
 </body>
 </html>
