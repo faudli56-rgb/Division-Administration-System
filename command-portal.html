@@ -16,7 +16,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: var(--font-body); background-color: var(--gray-light); color: var(--navy-dark); display: flex; flex-direction: column; min-height: 100vh;}
 
-        /* ================ رأس الصفحة والقائمة الجانبية ================ */
         header { background-color: var(--navy-dark); color: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--gold); position: sticky; top: 0; z-index: 100; }
         .header-right { display: flex; align-items: center; gap: 15px; }
         .menu-btn { background: transparent; border: none; color: var(--gold); font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; }
@@ -32,20 +31,17 @@
         .sidebar a { display: block; padding: 15px 25px; color: var(--white); text-decoration: none; font-size: 1.1rem; font-family: var(--font-heading); border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
         .sidebar a:hover, .sidebar a.active-link { background-color: rgba(212, 175, 55, 0.1); color: var(--gold); border-right: 4px solid var(--gold); }
 
-        /* ================ الحاويات والصفحات ================ */
         .container { padding: 20px; max-width: 1200px; margin: auto; flex: 1; width: 100%;}
         .page-section { display: none; animation: fadeIn 0.4s ease-in; }
         .page-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ================ البطاقات المختصرة ================ */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .stat-card { background-color: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-right: 4px solid var(--navy-dark); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
         .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
         .stat-card h3 { font-size: 1rem; color: #64748B; margin-bottom: 8px; font-family: var(--font-heading); }
         .stat-card .num { font-size: 2rem; font-weight: bold; font-family: var(--font-heading); color: var(--navy-dark); }
         
-        /* ================ الجداول والأزرار ================ */
         .table-container { background-color: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow-x: auto; margin-top: 20px;}
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         th, td { padding: 15px; text-align: right; border-bottom: 1px solid #eee; }
@@ -57,14 +53,12 @@
         .tab-btn { background: transparent; border: none; font-size: 1.1rem; font-family: var(--font-heading); font-weight: bold; color: #64748B; cursor: pointer; padding: 5px 10px; }
         .tab-btn.active { color: var(--navy-dark); border-bottom: 3px solid var(--gold); }
 
-        /* ================ النوافذ المنبثقة (Modals) ================ */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; overflow-y: auto; padding: 20px 0;}
         .modal-content { background: white; width: 92%; max-width: 700px; margin: 20px auto; padding: 25px; border-radius: 12px; border-top: 5px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
         .modal-content label { display: block; font-weight: bold; margin: 10px 0 5px; color: var(--navy-dark); }
         .modal-content textarea, .modal-content input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-family: var(--font-body); margin-bottom: 10px; }
         .modal-content textarea { min-height: 90px; resize: vertical; }
 
-        /* ================ المتابعة والتذكير والتصدير ================ */
         .danger-box { background-color: var(--white); border: 1px solid #eee; border-right: 5px solid var(--danger); padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .btn-share { background-color: #25D366; color: white; display: inline-block; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; text-align: center; margin-top: 15px;}
         #download-links { display: none; margin-top: 20px; background-color: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.2);}
@@ -75,9 +69,8 @@
 </head>
 <body>
 
-    <div class="loading-overlay" id="global-loader">جاري تهيئة النظام...</div>
+    <div class="loading-overlay" id="global-loader">جاري تهيئة النظام ومزامنة البيانات...</div>
 
-    <!-- القائمة الجانبية -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
     <div class="sidebar" id="sidebar">
         <button class="close-sidebar" onclick="toggleMenu()">✖</button>
@@ -89,7 +82,6 @@
         <a href="#" onclick="showPage('export')" id="link-export">📄 استخراج الموقف الرسمي</a>
     </div>
 
-    <!-- رأس الصفحة -->
     <header>
         <div class="header-right">
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
@@ -103,7 +95,7 @@
 
     <div class="container">
         
-        <!-- ==================== الصفحة 1: الرئيسية ==================== -->
+        <!-- الصفحة 1: الرئيسية -->
         <div id="page-home" class="page-section active">
             <div class="stats-grid">
                 <div class="stat-card" onclick="showPage('tracking')">
@@ -123,7 +115,7 @@
             </div>
         </div>
 
-        <!-- ==================== الصفحة 2: متابعة الإدارات ==================== -->
+        <!-- الصفحة 2: متابعة الإدارات -->
         <div id="page-tracking" class="page-section">
             <h2 style="font-family: var(--font-heading); margin-bottom: 15px;">📋 متابعة حالة الإدارات</h2>
             <div class="danger-box">
@@ -132,7 +124,7 @@
             </div>
         </div>
 
-        <!-- ==================== الصفحة 3: الوارد والأرشيف ==================== -->
+        <!-- الصفحة 3: الوارد والأرشيف -->
         <div id="page-inbox" class="page-section">
             <div class="tabs-header">
                 <button class="tab-btn active" onclick="switchInboxTab('recent')" id="tab-recent">آخر التقارير (24 ساعة)</button>
@@ -148,7 +140,7 @@
             </div>
         </div>
 
-        <!-- ==================== الصفحة 4: استخراج الموقف (شغالة 100%) ==================== -->
+        <!-- الصفحة 4: استخراج الموقف -->
         <div id="page-export" class="page-section">
             <div class="table-container" style="background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-light) 100%); color: white;">
                 <h2 style="font-family: var(--font-heading); color: var(--gold); margin-bottom: 20px;">استخراج تقرير الموقف</h2>
@@ -160,7 +152,6 @@
                 <input type="text" id="customFileName" style="width: 100%; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; font-weight:bold; color: var(--navy-dark);">
                 <button class="btn-generate" id="generateBtn" style="width: 100%; font-size:1.1rem; padding:15px;" onclick="generateReport()">⚙️ دمج واستخراج التقرير الرسمي</button>
                 
-                <!-- روابط التحميل تظهر هنا -->
                 <div id="download-links">
                     <h3 style="margin-bottom: 15px; color: var(--gold);">✔ تم تجهيز الموقف بنجاح</h3>
                     <a href="#" target="_blank" class="download-btn" style="background:#E63946;" id="link-pdf">📥 تحميل PDF</a>
@@ -172,34 +163,34 @@
             </div>
         </div>
 
-        <!-- ==================== الصفحة 5: إنجازات الرئاسة ==================== -->
+        <!-- الصفحة 5: إنجازات الرئاسة -->
         <div id="page-achievements" class="page-section">
             <h2 style="font-family: var(--font-heading); margin-bottom: 15px; color: var(--navy-dark);">⭐ إضافة إنجازات الرئاسة</h2>
             <div class="table-container">
-                <input type="text" id="ach_title" placeholder="عنوان الإنجاز" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;">
-                <textarea id="ach_desc" placeholder="تفاصيل الإنجاز..." style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px; min-height:80px;"></textarea>
-                <button class="btn-generate" onclick="addPresidencyAchievement()" id="btn-add-ach">➕ إضافة الإنجاز</button>
+                <input type="text" id="ach_title" placeholder="عنوان الإنجاز" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;" required>
+                <textarea id="ach_desc" placeholder="تفاصيل الإنجاز..." style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px; min-height:80px;" required></textarea>
+                <button class="btn-generate" onclick="addPresidencyAchievement()" id="btn-add-ach">➕ حفظ الإنجاز</button>
             </div>
             
-            <h3 style="margin-top:20px; font-family: var(--font-heading);">سجل إنجازات الرئاسة</h3>
+            <h3 style="margin-top:20px; font-family: var(--font-heading);">سجل إنجازات الرئاسة المعتمدة</h3>
             <div class="table-container">
                 <table>
-                    <thead><tr><th>التاريخ</th><th>العنوان</th><th>التفاصيل</th><th>إجراء</th></tr></thead>
+                    <thead><tr><th>التاريخ</th><th>العنوان</th><th>التفاصيل</th><th>الحالة</th></tr></thead>
                     <tbody id="presidency-achievements-body">
-                        <tr><td colspan="4" style="text-align:center;">(يتطلب تحديث كود Google Script لجلب البيانات)</td></tr>
+                        <tr><td colspan="4" style="text-align:center;">جاري جلب الإنجازات...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- ==================== الصفحة 6: اعتماد الإنجازات ==================== -->
+        <!-- الصفحة 6: اعتماد الإنجازات -->
         <div id="page-approvals" class="page-section">
-            <h2 style="font-family: var(--font-heading); margin-bottom: 15px; color: var(--navy-dark);">✅ اعتماد الإنجازات الداخلية</h2>
+            <h2 style="font-family: var(--font-heading); margin-bottom: 15px; color: var(--navy-dark);">✅ اعتماد الإنجازات الداخلية المرفوعة</h2>
             <div class="table-container">
                 <table>
                     <thead><tr><th>الجهة</th><th>عنوان الإنجاز</th><th>التفاصيل</th><th>إجراءات</th></tr></thead>
                     <tbody id="pending-achievements-body">
-                        <tr><td colspan="4" style="text-align:center;">(يتطلب تحديث كود Google Script لجلب البيانات)</td></tr>
+                        <tr><td colspan="4" style="text-align:center;">جاري جلب الطلبات المعلقة...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -207,7 +198,7 @@
 
     </div>
 
-    <!-- ==================== نافذة التعديل والتفاصيل (Modal) ==================== -->
+    <!-- نافذة التعديل والتفاصيل (Modal) -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <h2 id="editTitle" style="color: var(--navy-dark); margin-bottom: 15px; border-bottom: 2px solid var(--gold); padding-bottom: 10px;">تفاصيل وتعديل التقرير</h2>
@@ -240,7 +231,7 @@
         let editingReportId = null; 
         let finalPdfUrl = "";
 
-        // ==================== الواجهة والتنقل ====================
+        // ==================== التنقل ====================
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('sidebarOverlay').classList.toggle('open');
@@ -261,10 +252,85 @@
             renderTable(allReportsData, tab); 
         }
 
-        // ==================== جلب وتوزيع البيانات ====================
+        // ==================== دوال الإنجازات والاعتماد (الجديدة) ====================
+        async function fetchAchievementsData() {
+            try {
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getAchievementsList', token: token }) });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    renderPresidencyAchievements(result.presidencyAchievements);
+                    renderPendingAchievements(result.pendingAchievements);
+                }
+            } catch (error) { console.error('خطأ في جلب الإنجازات', error); }
+        }
+
+        function renderPresidencyAchievements(list) {
+            const tbody = document.getElementById('presidency-achievements-body');
+            tbody.innerHTML = '';
+            if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا توجد إنجازات مسجلة</td></tr>'; return; }
+            list.forEach(ach => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${new Date(ach.date).toLocaleDateString('ar-SA')}</td>
+                <td style="font-weight:bold;">${ach.title}</td>
+                <td style="white-space: pre-wrap; font-size: 0.9rem;">${ach.desc}</td>
+                <td style="color:green; font-weight:bold;">✔ ${ach.status}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderPendingAchievements(list) {
+            const tbody = document.getElementById('pending-achievements-body');
+            tbody.innerHTML = '';
+            if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا توجد إنجازات معلقة للاعتماد حالياً</td></tr>'; return; }
+            list.forEach(ach => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><span style="font-weight:bold; color:var(--navy-dark);">${ach.jobTitle}</span><br><span style="font-size:0.8rem; color:#888;">${new Date(ach.date).toLocaleDateString('ar-SA')}</span></td>
+                <td style="font-weight:bold;">${ach.title}</td>
+                <td style="white-space: pre-wrap; font-size: 0.9rem;">${ach.desc}</td>
+                <td>
+                    <button onclick="updateAchStatus('${ach.id}', 'معتمد')" style="background:#2A9D8F; color:white; border:none; padding:6px 10px; border-radius:4px; cursor:pointer; margin:2px;">✅ اعتماد</button>
+                    <button onclick="updateAchStatus('${ach.id}', 'مرفوض')" style="background:#E63946; color:white; border:none; padding:6px 10px; border-radius:4px; cursor:pointer; margin:2px;">❌ رفض</button>
+                    <button onclick="updateAchStatus('${ach.id}', 'مؤرشف')" style="background:#64748B; color:white; border:none; padding:6px 10px; border-radius:4px; cursor:pointer; margin:2px;">📦 أرشفة</button>
+                </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function addPresidencyAchievement() {
+            const title = document.getElementById('ach_title').value.trim();
+            const desc = document.getElementById('ach_desc').value.trim();
+            if(!title || !desc) { alert('يرجى ملء عنوان وتفاصيل الإنجاز'); return; }
+            
+            const btn = document.getElementById('btn-add-ach');
+            btn.innerText = 'جاري الحفظ... ⏳'; btn.disabled = true;
+
+            try {
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'addPresidencyAchievement', token: token, title: title, description: desc }) });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    document.getElementById('ach_title').value = ''; document.getElementById('ach_desc').value = '';
+                    alert('تم الحفظ بنجاح!');
+                    fetchAchievementsData(); // تحديث الجدول
+                } else { alert(result.message); }
+            } catch (error) { alert('حدث خطأ في الاتصال'); }
+            btn.innerText = '➕ حفظ الإنجاز'; btn.disabled = false;
+        }
+
+        async function updateAchStatus(id, newStatus) {
+            if(!confirm(`هل أنت متأكد من تغيير حالة الإنجاز إلى: ${newStatus}؟`)) return;
+            try {
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'updateAchievementStatus', token: token, achievementId: id, newStatus: newStatus }) });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    alert(`تم ${newStatus} الإنجاز بنجاح.`);
+                    fetchAchievementsData(); // تحديث الجدول
+                } else { alert(result.message); }
+            } catch (error) { alert('حدث خطأ في الاتصال'); }
+        }
+
+        // ==================== دوال لوحة القيادة القديمة (التقارير والاستخراج) ====================
         function updateDefaultFileName() {
-            const d = new Date();
-            const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+            const d = new Date(); const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
             document.getElementById('today-date').innerText = d.toLocaleDateString('ar-SA');
             document.getElementById('customFileName').value = `الموقف اليومي لشعبة الرعاية الاجتماعية ليوم ${days[d.getDay()]} بتاريخ ${d.toLocaleDateString('en-GB')}`;
             const iso = d.toISOString().split('T')[0];
@@ -276,69 +342,47 @@
             try {
                 const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getDashboardData', token: token }) });
                 const result = await response.json();
-                
                 if (result.status === 'success') {
                     document.getElementById('global-loader').style.display = 'none';
                     document.getElementById('total-reports').innerText = result.reports.length;
                     allReportsData = result.reports;
-                    
                     renderTracking(result.departmentsStatus);
                     renderTable(result.reports, 'recent');
-                } else { 
-                    alert(result.message); if(result.message.includes('جلسة')) logout(); 
-                }
+                } else { alert(result.message); if(result.message.includes('جلسة')) logout(); }
             } catch (error) { alert('خطأ في الاتصال بالخادم.'); }
         }
 
         function renderTracking(depts) {
-            const cont = document.getElementById('missing-list'); 
-            cont.innerHTML = '';
+            const cont = document.getElementById('missing-list'); cont.innerHTML = '';
             let submitted = 0;
             depts.forEach(d => {
                 if(d.submitted) submitted++;
-                const color = d.submitted ? 'green' : '#E63946';
-                const icon = d.submitted ? '✔' : '❌';
+                const color = d.submitted ? 'green' : '#E63946'; const icon = d.submitted ? '✔' : '❌';
                 cont.innerHTML += `<div style="color:${color}; margin-bottom:8px; font-weight:bold;">${icon} ${d.jobTitle}</div>`;
             });
-            document.getElementById('total-depts').innerText = depts.length;
-            document.getElementById('submitted-count').innerText = submitted;
-
+            document.getElementById('total-depts').innerText = depts.length; document.getElementById('submitted-count').innerText = submitted;
             const missing = depts.filter(d => !d.submitted).map(d => d.jobTitle);
             if (missing.length > 0) {
                 const msg = `تذكير هام للإدارات التالية: \n${missing.join('، ')} \n\nيرجى سرعة رفع الموقف اليومي.`;
                 cont.innerHTML += `<a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" class="btn-share">📢 تذكير واتساب للمتأخرين</a>`;
-            } else {
-                cont.innerHTML += `<p style="color:green; font-weight:bold; margin-top:10px;">✔ تم استلام جميع التقارير.</p>`;
-            }
+            } else { cont.innerHTML += `<p style="color:green; font-weight:bold; margin-top:10px;">✔ تم استلام جميع التقارير.</p>`; }
         }
 
         function renderTable(reports, filterType) {
-            const tbody = document.getElementById('table-body'); 
-            tbody.innerHTML = '';
-            const now = new Date();
-            let displayReports = reports;
-            
-            if(filterType === 'recent') {
-                displayReports = reports.filter(rep => (Math.abs(now - new Date(rep.date)) / 36e5) <= 24);
-            }
-
-            if (displayReports.length === 0) { 
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">لا توجد تقارير</td></tr>'; return; 
-            }
-            
+            const tbody = document.getElementById('table-body'); tbody.innerHTML = '';
+            const now = new Date(); let displayReports = reports;
+            if(filterType === 'recent') displayReports = reports.filter(rep => (Math.abs(now - new Date(rep.date)) / 36e5) <= 24);
+            if (displayReports.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">لا توجد تقارير</td></tr>'; return; }
             displayReports.slice(0, 50).forEach(rep => {
-                const dObj = new Date(rep.date);
-                const tr = document.createElement('tr');
+                const dObj = new Date(rep.date); const tr = document.createElement('tr');
                 tr.innerHTML = `<td>${rep.reportId}</td><td>${dObj.toLocaleDateString('ar-SA')} ${dObj.toLocaleTimeString('ar-SA')}</td><td>${rep.jobTitle}</td>
                 <td><button class="btn-generate" style="padding: 6px 12px; font-size: 0.9rem;" onclick="openEdit('${rep.reportId}')">✏️ تفاصيل وتعديل</button></td>`;
                 tbody.appendChild(tr);
             });
         }
 
-        // ==================== التعديل والتفاصيل ====================
         function openEdit(id) {
-            const r = allReportsData.find(x => x.reportId === id);
-            editingReportId = id;
+            const r = allReportsData.find(x => x.reportId === id); editingReportId = id;
             document.getElementById('editTitle').innerText = 'تفاصيل تقرير: ' + r.jobTitle;
             document.getElementById('e_tasks').value = r.tasks; document.getElementById('e_movements').value = r.movements;
             document.getElementById('e_incidents').value = r.incidents; document.getElementById('e_visits').value = r.visits;
@@ -350,29 +394,21 @@
             document.getElementById('saveBtn').innerText = 'جاري الحفظ...';
             const payload = { tasks: document.getElementById('e_tasks').value, movements: document.getElementById('e_movements').value, incidents: document.getElementById('e_incidents').value, visits: document.getElementById('e_visits').value, demands: document.getElementById('e_demands').value, notes: document.getElementById('e_notes').value };
             await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'editReport', token: token, reportId: editingReportId, payload: payload }) });
-            document.getElementById('editModal').style.display = 'none';
-            document.getElementById('saveBtn').innerText = '💾 حفظ التعديلات';
+            document.getElementById('editModal').style.display = 'none'; document.getElementById('saveBtn').innerText = '💾 حفظ التعديلات';
             fetchDashboardData();
         }
 
-        // ==================== استخراج الموقف (التصدير) ====================
         async function generateReport() {
             const start = document.getElementById('startDate').value; const end = document.getElementById('endDate').value;
             const btn = document.getElementById('generateBtn'); const linksDiv = document.getElementById('download-links');
             if (!start || !end) { alert('يرجى تحديد تواريخ البداية والنهاية'); return; }
             btn.innerHTML = 'جاري دمج التقارير... ⏳'; btn.disabled = true; linksDiv.style.display = 'none';
-
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST', body: JSON.stringify({ action: 'generatePeriodicReport', token: token, startDate: start, endDate: end, customFileName: document.getElementById('customFileName').value })
-                });
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'generatePeriodicReport', token: token, startDate: start, endDate: end, customFileName: document.getElementById('customFileName').value }) });
                 const result = await response.json();
                 if (result.status === 'success') {
-                    document.getElementById('link-pdf').href = result.links.pdf;
-                    document.getElementById('link-word').href = result.links.word;
-                    document.getElementById('link-excel').href = result.links.excel;
-                    finalPdfUrl = result.links.pdf;
-                    linksDiv.style.display = 'block'; btn.innerHTML = '⚙️ إعادة إنشاء التقرير';
+                    document.getElementById('link-pdf').href = result.links.pdf; document.getElementById('link-word').href = result.links.word; document.getElementById('link-excel').href = result.links.excel;
+                    finalPdfUrl = result.links.pdf; linksDiv.style.display = 'block'; btn.innerHTML = '⚙️ إعادة إنشاء التقرير';
                 } else { alert(result.message); btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي'; }
             } catch (error) { alert('حدث خطأ أثناء إنشاء التقرير.'); btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي'; }
             btn.disabled = false;
@@ -384,20 +420,13 @@
             else { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent("مرفق الموقف المجمع: " + finalPdfUrl)}`); }
         }
 
-        // ==================== الإنجازات والاعتماد (تجهيز الأزرار للخطوة القادمة) ====================
-        async function addPresidencyAchievement() {
-            const title = document.getElementById('ach_title').value;
-            const desc = document.getElementById('ach_desc').value;
-            if(!title || !desc) { alert('يرجى ملء كافة الحقول'); return; }
-            
-            document.getElementById('btn-add-ach').innerText = 'جاري الإضافة...';
-            // هنا سيتم استدعاء السيرفر (Google Apps Script) بمجرد برمجته في الخطوة القادمة
-            alert('تم تصميم الواجهة بنجاح! سنقوم في الخطوة القادمة ببرمجة Google Script لكي يحفظ هذه الإنجازات ويعرضها.');
-            document.getElementById('btn-add-ach').innerText = '➕ إضافة الإنجاز';
-        }
-
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
-        window.onload = fetchDashboardData;
+        
+        // تشغيل دوال الجلب عند فتح الصفحة
+        window.onload = function() {
+            fetchDashboardData();
+            fetchAchievementsData(); // الميزة الجديدة: جلب الإنجازات فوراً
+        };
     </script>
 </body>
 </html>
