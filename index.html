@@ -9,10 +9,13 @@
     
     <style>
         :root {
-            --royal-blue: #1D4ED8;
-            --royal-blue-hover: #2563EB;
-            --text-main: #FFFFFF;
-            --text-muted: rgba(255, 255, 255, 0.7);
+            --navy: #0A192F;
+            --navy-light: #112240;
+            --gold: #D4AF37;
+            --white: #FFFFFF;
+            --bg-light: #F8F9FA;
+            --text-dark: #1A202C;
+            --text-muted: #718096;
             --font-heading: 'Cairo', sans-serif;
             --font-body: 'Tajawal', sans-serif;
         }
@@ -21,134 +24,87 @@
 
         body {
             font-family: var(--font-body);
-            /* الخلفية المتدرجة الرسمية */
-            background: linear-gradient(135deg, #071A2F 0%, #0E2C4F 50%, #174A78 100%);
-            /* نقش شبكة النقاط الشفافة (Dot Grid Pattern) */
-            background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1.5px, transparent 1.5px);
-            background-size: 25px 25px;
-            color: var(--text-main);
+            background-color: var(--bg-light);
+            /* نقش خفيف جداً يضيف فخامة للون الفاتح */
+            background-image: radial-gradient(#E2E8F0 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--text-dark);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            overflow-x: hidden;
-            opacity: 0; /* للظهور المتدرج عند التحميل */
-            animation: fadeIn 1.2s ease-in-out forwards;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-in forwards;
         }
 
         @keyframes fadeIn { to { opacity: 1; } }
 
-        /* ================ الحاوية الرئيسية ================ */
-        .main-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
+        /* ================ الحاوية الرئيسية (البطاقة البيضاء) ================ */
+        .login-card {
+            background-color: var(--white);
+            width: 92%;
+            max-width: 480px;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(10, 25, 47, 0.08);
+            border-top: 6px solid var(--navy);
             text-align: center;
-            z-index: 10;
+            position: relative;
+            margin: 20px 0;
         }
 
-        .top-entity {
+        /* ================ الشعار ================ */
+        .logo-container {
+            margin-bottom: 25px;
+        }
+
+        .logo-container img {
+            width: 220px; /* تم تكبير الشعار بشكل بارز */
+            height: auto;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1));
+        }
+
+        /* ================ النصوص والعناوين ================ */
+        .org-title {
             font-family: var(--font-heading);
             font-size: 1.1rem;
-            font-weight: 700;
             color: var(--text-muted);
-            letter-spacing: 1px;
-            margin-bottom: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
         }
 
-        /* ================ تأثيرات الشعار الزجاجية ================ */
-        .logo-wrapper {
-            position: relative;
-            width: 260px;
-            height: 260px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto 20px auto;
-        }
-
-        /* الإضاءة الشعاعية الناعمة (Radial Glow) */
-        .logo-wrapper::before {
-            content: '';
-            position: absolute;
-            width: 280px;
-            height: 280px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
-            border-radius: 50%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* الدائرة الزجاجية (Glass Circle) */
-        .glass-circle {
-            width: 170px;
-            height: 170px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
-            z-index: 1;
-        }
-
-        /* الشعار (PNG) */
-        .glass-circle img {
-            width: 130px; /* الحجم المطلوب 110-130 */
-            height: auto;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); /* ظل خفيف أسفل الشعار */
-        }
-
-        /* ================ العناوين والترحيب ================ */
         .system-title {
             font-family: var(--font-heading);
-            font-size: 2.2rem;
+            font-size: 2.1rem;
+            color: var(--navy);
             font-weight: 800;
-            margin-bottom: 5px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .system-subtitle {
-            font-family: var(--font-body);
-            font-size: 1rem;
-            color: var(--text-muted);
-            letter-spacing: 2px;
-            margin-bottom: 25px;
-            text-transform: uppercase;
+            margin-bottom: 20px;
         }
 
         .welcome-msg {
             font-size: 0.95rem;
+            color: var(--text-muted);
             line-height: 1.7;
-            color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 35px;
-            padding: 0 15px;
+            margin-bottom: 30px;
+            padding: 0 10px;
         }
 
-        /* ================ نموذج تسجيل الدخول ================ */
+        /* ================ الحقول والأزرار ================ */
         .login-form {
-            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 18px;
         }
 
         .input-group input {
             width: 100%;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            color: var(--text-main);
+            padding: 16px;
+            background-color: #F7FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            color: var(--navy);
             font-family: var(--font-body);
             font-size: 1rem;
             text-align: center;
@@ -157,141 +113,124 @@
         }
 
         .input-group input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+            color: #A0AEC0;
         }
 
         .input-group input:focus {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+            background-color: var(--white);
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
         }
 
-        /* الزر الملكي */
-        .btn-royal {
-            background-color: var(--royal-blue);
-            color: var(--text-main);
+        .btn-submit {
+            background-color: var(--navy);
+            color: var(--gold);
             font-family: var(--font-heading);
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             border: none;
             padding: 16px;
-            border-radius: 16px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.4);
-            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(10, 25, 47, 0.15);
+            margin-top: 5px;
         }
 
-        .btn-royal:hover {
-            background-color: var(--royal-blue-hover);
-            box-shadow: 0 6px 20px rgba(29, 78, 216, 0.6);
+        .btn-submit:hover {
+            background-color: var(--navy-light);
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(10, 25, 47, 0.25);
         }
 
-        .btn-royal:disabled {
-            background-color: #475569;
-            box-shadow: none;
+        .btn-submit:disabled {
+            background-color: #CBD5E0;
+            color: #718096;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
-        /* ================ التذييل (Footer) ================ */
-        .official-footer {
-            width: 100%;
-            text-align: center;
-            padding: 20px;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.4);
+        /* ================ التذييل ================ */
+        .footer-info {
+            margin-top: 25px;
+            font-size: 0.8rem;
+            color: #A0AEC0;
             line-height: 1.8;
-            z-index: 10;
         }
 
-        .official-footer .highlight {
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        /* حقوق المطور */
         .dev-signature {
-            margin-top: 10px;
-            font-size: 0.75rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 10px;
-            display: inline-block;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #EDF2F7;
+            font-size: 0.85rem;
+            color: var(--text-muted);
         }
+
         .dev-signature a {
-            color: #25D366;
-            text-decoration: none;
+            color: var(--navy);
             font-weight: bold;
+            text-decoration: none;
             direction: ltr;
             display: inline-block;
         }
 
-        /* ================ إشعارات Toast ================ */
+        /* ================ الإشعارات ================ */
         #toast-container {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             z-index: 10000; display: flex; flex-direction: column; gap: 10px;
         }
         .toast {
-            background: rgba(10, 25, 47, 0.95); border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-main); padding: 12px 24px; border-radius: 8px;
-            font-family: var(--font-body); font-weight: 500;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px;
-            animation: slideDown 0.4s ease-out; backdrop-filter: blur(10px);
+            background: var(--navy); color: var(--white); padding: 12px 24px;
+            border-radius: 8px; font-family: var(--font-body); font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px;
+            animation: slideDown 0.4s ease-out;
         }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="main-container">
+    <div class="login-card">
         
-        <div class="top-entity">القوات المسلحة اليمنية</div>
-
-        <div class="logo-wrapper">
-            <div class="glass-circle">
-                <!-- الشعار الرسمي بخلفية شفافة -->
-                <img src="https://lh3.googleusercontent.com/d/1-zLe9gWCZkplOJbzRfjWREyfehlq4J-D" alt="شعار وزارة الدفاع">
-            </div>
+        <div class="org-title">القوات المسلحة اليمنية</div>
+        
+        <div class="logo-container">
+            <img src="https://lh3.googleusercontent.com/d/1-zLe9gWCZkplOJbzRfjWREyfehlq4J-D" alt="شعار وزارة الدفاع">
         </div>
 
         <h1 class="system-title">نظام شعبة الرعاية الاجتماعية</h1>
-        <div class="system-subtitle">Social Welfare Division System</div>
 
         <p class="welcome-msg">
-            مرحبًا بكم في النظام الداخلي لشعبة الرعاية الاجتماعية، المصمم لتسهيل إدارة العمليات الإدارية بكفاءة وأمان.
+            مرحباً بكم في النظام الداخلي المخصص لإدارة العمليات وتسهيل المهام الإدارية للمستخدمين المخولين بكفاءة وأمان.
         </p>
 
         <form id="loginForm" class="login-form">
             <div class="input-group">
-                <input type="text" id="username" placeholder="اسم المستخدم (الرقم العسكري / المعرف)" required autocomplete="off">
+                <input type="text" id="username" placeholder="اسم المستخدم" required autocomplete="off">
             </div>
             <div class="input-group">
                 <input type="password" id="password" placeholder="كلمة المرور" required>
             </div>
-            <button type="submit" class="btn-royal" id="loginBtn">تسجيل الدخول</button>
+            <button type="submit" class="btn-submit" id="loginBtn">تسجيل الدخول</button>
         </form>
 
-    </div>
+        <div class="footer-info">
+            الإصدار 5.0 | Internal Administrative System<br>
+            آمن • موثوق • للمستخدمين المخولين فقط<br>
+            جميع الحقوق محفوظة © 2026
+        </div>
 
-    <!-- التذييل الرسمي -->
-    <div class="official-footer">
-        <div>الإصدار 5.0 | <span class="highlight">Internal Administrative System</span></div>
-        <div style="margin: 5px 0;">آمن • موثوق • للمستخدمين المخولين فقط</div>
-        <div>جميع الحقوق محفوظة - شعبة الرعاية الاجتماعية © 2026</div>
-        
         <div class="dev-signature">
-            تم تطوير النظام من قبل: <strong>فؤاد العميسي</strong> | 
+            تم التطوير بواسطة: <strong>فؤاد العميسي</strong> | 
             <a href="https://wa.me/967777644293" target="_blank" title="تواصل عبر واتساب">📞 777644293</a>
         </div>
+
     </div>
 
-    <!-- حاوية الإشعارات -->
     <div id="toast-container"></div>
 
     <script>
-        // رابط API المعتمد الخاص بك
         const API_URL = "https://script.google.com/macros/s/AKfycbwmvcuZXQDaSl-c7HTYv493U1CbaV5WXkjgu7XYn8UstyBETcXdh_r_Mo8udfzjT-ozvw/exec";
 
         function showToast(message, type = 'success') {
@@ -299,7 +238,7 @@
             const toast = document.createElement('div');
             toast.className = 'toast';
             const icon = type === 'success' ? '✔' : '⚠️';
-            toast.innerHTML = `<span style="color:${type==='success'?'#2A9D8F':'#E63946'}; font-size:1.2rem;">${icon}</span> <span>${message}</span>`;
+            toast.innerHTML = `<span style="color:${type==='success'?'#D4AF37':'#E63946'}; font-size:1.2rem;">${icon}</span> <span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
@@ -311,7 +250,7 @@
             const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('loginBtn');
 
-            btn.innerHTML = 'جاري التحقق الآمن...';
+            btn.innerHTML = 'جاري التحقق...';
             btn.disabled = true;
 
             try {
@@ -335,7 +274,7 @@
                     btn.disabled = false;
                 }
             } catch (error) {
-                showToast('خطأ في الاتصال الآمن بالخادم.', 'error');
+                showToast('خطأ في الاتصال بالخادم.', 'error');
                 btn.innerHTML = 'تسجيل الدخول';
                 btn.disabled = false;
             }
