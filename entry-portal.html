@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الإدخال | شعبة الرعاية الاجتماعية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --navy-dark: #0A192F;
+            --navy-light: #112240;
+            --gold: #D4AF37;
+            --gold-hover: #F3E5AB;
+            --white: #FFFFFF;
+            --gray-light: #F3F4F6;
+            --danger: #E63946;
+            --success: #2A9D8F;
+            --font-heading: 'Cairo', sans-serif;
+            --font-body: 'Tajawal', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--gray-light);
+            color: var(--navy-dark);
+            padding-bottom: 50px;
+        }
+
+        /* ================= الترويسة ================= */
+        header {
+            background-color: var(--navy-dark);
+            color: var(--white);
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 4px solid var(--gold);
+        }
+
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .header-top h1 { font-family: var(--font-heading); font-size: 1.2rem; color: var(--gold); }
+        
+        .btn-logout {
+            background-color: transparent; color: var(--white); border: 1px solid var(--white);
+            padding: 5px 15px; border-radius: 4px; cursor: pointer; font-family: var(--font-body); transition: all 0.3s;
+        }
+        .btn-logout:hover { background-color: var(--danger); border-color: var(--danger); }
+
+        .user-info { background-color: var(--navy-light); padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
+        .user-details strong { display: block; font-size: 1.1rem; color: var(--gold); margin-bottom: 5px; }
+
+        /* ================= الحاويات والنماذج ================= */
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+
+        .card {
+            background-color: var(--white); border-radius: 8px; padding: 20px; margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 3px solid var(--navy-dark);
+        }
+
+        .card h3 { font-family: var(--font-heading); margin-bottom: 15px; color: var(--navy-dark); }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+        .form-control {
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;
+            font-family: var(--font-body); font-size: 0.95rem;
+        }
+        .form-control:focus { outline: none; border-color: var(--gold); }
+
+        textarea.form-control { resize: vertical; min-height: 80px; }
+
+        /* ================= الأزرار ================= */
+        .btn-gold {
+            background-color: var(--gold); color: var(--navy-dark); font-family: var(--font-heading); font-weight: 700;
+            font-size: 1.2rem; border: none; padding: 15px; border-radius: 8px; width: 100%; cursor: pointer; transition: 0.3s;
+        }
+        .btn-gold:hover { background-color: var(--gold-hover); transform: scale(1.02); }
+
+        .btn-outline {
+            background-color: transparent; color: var(--navy-dark); border: 2px dashed var(--navy-dark);
+            padding: 10px; border-radius: 6px; width: 100%; cursor: pointer; font-family: var(--font-body); font-weight: 600;
+            margin-bottom: 10px; transition: 0.3s;
+        }
+        .btn-outline:hover { background-color: var(--navy-light); color: var(--white); border-color: var(--navy-light); }
+
+        /* ================= النوافذ المنبثقة (Modals) ================= */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(10, 25, 47, 0.8); backdrop-filter: blur(3px); overflow-y: auto;
+        }
+        .modal-content {
+            background-color: var(--white); margin: 20px auto; padding: 20px; border-radius: 8px;
+            width: 95%; max-width: 600px; border-top: 4px solid var(--gold); position: relative;
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .close-btn { color: var(--danger); font-size: 1.5rem; cursor: pointer; font-weight: bold; background: none; border: none; }
+        
+        /* تقسيم الحقول في النافذة المنبثقة (عمودين) */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; gap: 10px; } }
+
+        /* قائمة الخسائر المضافة */
+        .loss-item {
+            background-color: var(--gray-light); padding: 10px; border-radius: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 8px; border-right: 3px solid var(--navy-dark); font-size: 0.9rem;
+        }
+        .btn-delete-item { color: var(--danger); background: none; border: none; cursor: pointer; font-weight: bold; font-size: 1rem; }
+
+        /* الإشعارات وشاشة النجاح */
+        #success-screen { display: none; text-align: center; padding: 50px 20px; }
+        #success-screen h2 { color: var(--success); font-family: var(--font-heading); margin-bottom: 15px; font-size: 2rem; }
+        #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background-color: var(--navy-dark); color: var(--white); padding: 12px 24px; border-radius: 8px; font-weight: 500; display: flex; gap: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- الترويسة -->
+    <header>
+        <div class="header-top">
+            <h1>شعبة الرعاية الاجتماعية</h1>
+            <button class="btn-logout" onclick="logout()">خروج</button>
+        </div>
+        <div class="user-info">
+            <div class="user-details">
+                <strong id="display-name">جاري التحميل...</strong>
+                <span id="display-job">جاري التحميل...</span>
+            </div>
+            <div class="time-details" style="text-align: left;">
+                <div id="live-date" style="color: var(--gold); font-weight: bold;"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- حاوية النموذج الرئيسي -->
+    <div class="container" id="form-container">
+        <form id="reportForm">
+            
+            <div class="card">
+                <h3>📌 معلومات التقرير</h3>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>التاريخ الهجري (اختياري)</label>
+                        <input type="text" id="hijriDate" class="form-control" placeholder="مثال: 1445/05/12">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>✅ المهام والتحركات</h3>
+                <div class="form-group"><label>المهام المنفذة</label><textarea id="tasks" class="form-control" placeholder="اكتب المهام..."></textarea></div>
+                <div class="form-group"><label>التحركات</label><textarea id="movements" class="form-control" placeholder="اكتب التحركات..."></textarea></div>
+            </div>
+
+            <div class="card">
+                <h3>⚠️ الحوادث والزيارات</h3>
+                <div class="form-group"><label>الحوادث</label><textarea id="incidents" class="form-control" placeholder="سجل الحوادث..."></textarea></div>
+                <div class="form-group"><label>الزيارات</label><textarea id="visits" class="form-control" placeholder="سجل الزيارات..."></textarea></div>
+            </div>
+
+            <div class="card">
+                <h3>📝 المطالب والملاحظات</h3>
+                <div class="form-group"><label>المطالب الأساسية</label><textarea id="demands" class="form-control"></textarea></div>
+                <div class="form-group"><label>ملاحظات إضافية</label><textarea id="notes" class="form-control"></textarea></div>
+            </div>
+
+            <!-- قسم الخسائر (الجداول) -->
+            <div class="card">
+                <h3>🩸 الخسائر البشرية والمادية</h3>
+                
+                <!-- عرض الخسائر البشرية المضافة -->
+                <div id="human-losses-container" style="margin-bottom: 15px;"></div>
+                <button type="button" class="btn-outline" onclick="openModal('humanModal')">➕ إضافة خسارة بشرية</button>
+                
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+
+                <!-- عرض الخسائر المادية المضافة -->
+                <div id="material-losses-container" style="margin-bottom: 15px;"></div>
+                <button type="button" class="btn-outline" onclick="openModal('materialModal')">➕ إضافة خسارة مادية</button>
+            </div>
+
+            <button type="submit" class="btn-gold" id="submitBtn">📤 إرسال التقرير النهائي</button>
+        </form>
+    </div>
+
+    <!-- ================= النافذة المنبثقة: الخسائر البشرية ================= -->
+    <div id="humanModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="font-family: var(--font-heading); color: var(--navy-dark);">إضافة خسارة بشرية</h3>
+                <button class="close-btn" onclick="closeModal('humanModal')">×</button>
+            </div>
+            <form id="humanLossForm">
+                <div class="grid-2">
+                    <div class="form-group"><label>الرقم العسكري</label><input type="text" id="h_militaryId" class="form-control" required></div>
+                    <div class="form-group"><label>الرتبة</label><input type="text" id="h_rank" class="form-control" required></div>
+                    <div class="form-group"><label>الرتبة المستحقة</label><input type="text" id="h_deservedRank" class="form-control"></div>
+                    <div class="form-group"><label>الاسم الرباعي</label><input type="text" id="h_name" class="form-control" required></div>
+                    <div class="form-group"><label>الوحدة</label><input type="text" id="h_unit" class="form-control"></div>
+                    <div class="form-group"><label>تاريخ الاستشهاد/الاصابة</label><input type="date" id="h_date" class="form-control" required></div>
+                    <div class="form-group"><label>مكان الاستشهاد/الاصابة</label><input type="text" id="h_place" class="form-control"></div>
+                    <div class="form-group"><label>سبب الاستشهاد/الاصابة</label><input type="text" id="h_reason" class="form-control"></div>
+                    <div class="form-group"><label>نوع الاصابة</label><input type="text" id="h_type" class="form-control"></div>
+                    <div class="form-group"><label>المحافظة</label><input type="text" id="h_gov" class="form-control"></div>
+                    <div class="form-group"><label>المديرية</label><input type="text" id="h_district" class="form-control"></div>
+                    <div class="form-group"><label>العزلة</label><input type="text" id="h_uzla" class="form-control"></div>
+                    <div class="form-group"><label>الحالة</label><input type="text" id="h_status" class="form-control"></div>
+                </div>
+                <button type="submit" class="btn-gold" style="padding: 10px; font-size: 1rem; margin-top: 15px;">حفظ في القائمة ✔</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= النافذة المنبثقة: الخسائر المادية ================= -->
+    <div id="materialModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="font-family: var(--font-heading); color: var(--navy-dark);">إضافة خسارة مادية</h3>
+                <button class="close-btn" onclick="closeModal('materialModal')">×</button>
+            </div>
+            <form id="materialLossForm">
+                <div class="grid-2">
+                    <div class="form-group"><label>النوع (طقم، دبابة، الخ)</label><input type="text" id="m_type" class="form-control" required></div>
+                    <div class="form-group"><label>الموديل</label><input type="text" id="m_model" class="form-control"></div>
+                    <div class="form-group"><label>رقم اللوحة/التسلسلي</label><input type="text" id="m_number" class="form-control"></div>
+                    <div class="form-group"><label>نوع العطل</label><input type="text" id="m_damageType" class="form-control"></div>
+                    <div class="form-group"><label>نوع التدمير (كلي/جزئي)</label><input type="text" id="m_destructionLevel" class="form-control"></div>
+                    <div class="form-group"><label>السبب</label><input type="text" id="m_reason" class="form-control"></div>
+                    <div class="form-group"><label>الوحدة</label><input type="text" id="m_unit" class="form-control"></div>
+                    <div class="form-group"><label>المكان</label><input type="text" id="m_place" class="form-control"></div>
+                    <div class="form-group"><label>التاريخ</label><input type="date" id="m_date" class="form-control" required></div>
+                </div>
+                <div class="form-group"><label>ملاحظات إضافية</label><input type="text" id="m_notes" class="form-control"></div>
+                <button type="submit" class="btn-gold" style="padding: 10px; font-size: 1rem; margin-top: 15px;">حفظ في القائمة ✔</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- شاشة النجاح -->
+    <div id="success-screen">
+        <h2>✔ تم استلام تقريركم بنجاح</h2>
+        <button class="btn-outline" style="max-width: 200px; margin-top: 20px;" onclick="location.reload()">إرسال تقرير جديد</button>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwmvcuZXQDaSl-c7HTYv493U1CbaV5WXkjgu7XYn8UstyBETcXdh_r_Mo8udfzjT-ozvw/exec";
+        
+        // 1. الأمان والترويسة
+        const token = sessionStorage.getItem('token');
+        const userDataString = sessionStorage.getItem('userData');
+        if (!token || !userDataString) window.location.href = 'index.html';
+        const userData = JSON.parse(userDataString);
+
+        document.getElementById('display-name').innerText = userData.name;
+        document.getElementById('display-job').innerText = userData.jobTitle;
+        document.getElementById('live-date').innerText = new Date().toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+
+        function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
+        function showToast(msg, type='success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div'); toast.className = `toast`;
+            toast.innerHTML = `<span>${type==='success'?'✔':'❌'}</span> <span>${msg}</span>`;
+            container.appendChild(toast); setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ================= إدارة مصفوفات الخسائر =================
+        let humanLossesArray = [];
+        let materialLossesArray = [];
+
+        function openModal(id) { document.getElementById(id).style.display = 'block'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // إضافة خسارة بشرية
+        document.getElementById('humanLossForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const lossObj = {
+                militaryId: document.getElementById('h_militaryId').value,
+                rank: document.getElementById('h_rank').value,
+                deservedRank: document.getElementById('h_deservedRank').value,
+                name: document.getElementById('h_name').value,
+                unit: document.getElementById('h_unit').value,
+                date: document.getElementById('h_date').value,
+                place: document.getElementById('h_place').value,
+                reason: document.getElementById('h_reason').value,
+                type: document.getElementById('h_type').value,
+                gov: document.getElementById('h_gov').value,
+                district: document.getElementById('h_district').value,
+                uzla: document.getElementById('h_uzla').value,
+                status: document.getElementById('h_status').value
+            };
+            humanLossesArray.push(lossObj);
+            renderLosses();
+            this.reset();
+            closeModal('humanModal');
+            showToast('تمت إضافة الخسارة البشرية للقائمة');
+        });
+
+        // إضافة خسارة مادية
+        document.getElementById('materialLossForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const lossObj = {
+                type: document.getElementById('m_type').value,
+                model: document.getElementById('m_model').value,
+                number: document.getElementById('m_number').value,
+                damageType: document.getElementById('m_damageType').value,
+                destructionLevel: document.getElementById('m_destructionLevel').value,
+                reason: document.getElementById('m_reason').value,
+                unit: document.getElementById('m_unit').value,
+                place: document.getElementById('m_place').value,
+                date: document.getElementById('m_date').value,
+                notes: document.getElementById('m_notes').value
+            };
+            materialLossesArray.push(lossObj);
+            renderLosses();
+            this.reset();
+            closeModal('materialModal');
+            showToast('تمت إضافة الخسارة المادية للقائمة');
+        });
+
+        // رسم قوائم الخسائر في الشاشة
+        function renderLosses() {
+            const hContainer = document.getElementById('human-losses-container');
+            hContainer.innerHTML = '';
+            humanLossesArray.forEach((loss, index) => {
+                hContainer.innerHTML += `
+                    <div class="loss-item">
+                        <div><strong>👤 ${loss.name}</strong> - ${loss.rank}</div>
+                        <button type="button" class="btn-delete-item" onclick="deleteHumanLoss(${index})">🗑</button>
+                    </div>
+                `;
+            });
+
+            const mContainer = document.getElementById('material-losses-container');
+            mContainer.innerHTML = '';
+            materialLossesArray.forEach((loss, index) => {
+                mContainer.innerHTML += `
+                    <div class="loss-item">
+                        <div><strong>🚜 ${loss.type}</strong> - ${loss.damageType || 'بدون تحديد'}</div>
+                        <button type="button" class="btn-delete-item" onclick="deleteMaterialLoss(${index})">🗑</button>
+                    </div>
+                `;
+            });
+        }
+
+        function deleteHumanLoss(index) { humanLossesArray.splice(index, 1); renderLosses(); }
+        function deleteMaterialLoss(index) { materialLossesArray.splice(index, 1); renderLosses(); }
+
+        // ================= الإرسال النهائي للتقرير =================
+        document.getElementById('reportForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = 'جاري التشفير والإرسال... ⏳'; btn.disabled = true;
+
+            const payload = {
+                hijriDate: document.getElementById('hijriDate').value,
+                jobTitle: userData.jobTitle,
+                tasks: document.getElementById('tasks').value,
+                movements: document.getElementById('movements').value,
+                incidents: document.getElementById('incidents').value,
+                visits: document.getElementById('visits').value,
+                demands: document.getElementById('demands').value,
+                notes: document.getElementById('notes').value,
+                humanLosses: humanLossesArray,     // إرسال المصفوفة المعبأة
+                materialLosses: materialLossesArray // إرسال المصفوفة المعبأة
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST', body: JSON.stringify({ action: 'submitReport', token: token, payload: payload })
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    document.getElementById('form-container').style.display = 'none';
+                    document.getElementById('success-screen').style.display = 'block';
+                    window.scrollTo(0, 0);
+                } else {
+                    showToast(result.message, 'error');
+                    btn.innerHTML = '📤 إرسال التقرير النهائي'; btn.disabled = false;
+                    if(result.message.includes('جلسة')) setTimeout(logout, 2000);
+                }
+            } catch (error) {
+                showToast('حدث خطأ في الاتصال، تأكد من الإنترنت.', 'error');
+                btn.innerHTML = '📤 إرسال التقرير النهائي'; btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام شعبة الرعاية الاجتماعية | تسجيل الدخول</title>
+    
+    <!-- استدعاء خطوط كايرو وتجول من جوجل -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --navy-dark: #0A192F;
+            --navy-light: #112240;
+            --gold: #D4AF37;
+            --gold-hover: #F3E5AB;
+            --white: #FFFFFF;
+            --gray-light: #F3F4F6;
+            --danger: #E63946;
+            --success: #2A9D8F;
+            --font-heading: 'Cairo', sans-serif;
+            --font-body: 'Tajawal', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--gray-light);
+            color: var(--navy-dark);
+            height: 100vh;
+            overflow: hidden; /* لمنع التمدد والاهتزاز في الجوال */
+        }
+
+        /* ================= شاشة البداية (Splash Screen) ================= */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--navy-dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            color: var(--gold);
+        }
+
+        .splash-content {
+            text-align: center;
+            animation: scaleUp 1.5s ease-out;
+        }
+
+        .splash-content h1 {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--white);
+        }
+
+        .splash-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .splash-content p {
+            font-size: 1rem;
+            color: var(--gray-light);
+            opacity: 0.8;
+        }
+
+        .fade-out {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.1);
+        }
+
+        @keyframes scaleUp {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* ================= شاشة تسجيل الدخول ================= */
+        #login-screen {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-light) 100%);
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        .login-container {
+            background-color: var(--white);
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border-top: 5px solid var(--gold);
+        }
+
+        .login-header h2 {
+            font-family: var(--font-heading);
+            color: var(--navy-dark);
+            margin-bottom: 5px;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .login-header p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-gold {
+            background-color: var(--gold);
+            color: var(--navy-dark);
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: none;
+            padding: 14px;
+            border-radius: 6px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-gold:hover {
+            background-color: var(--gold-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-gold:disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ================= إشعارات Toast ================= */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background-color: var(--navy-dark);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideUp 0.3s ease-out;
+            min-width: 250px;
+        }
+
+        .toast.success { border-right: 4px solid var(--success); }
+        .toast.error { border-right: 4px solid var(--danger); }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .toast.slide-out {
+            animation: fadeOut 0.3s forwards;
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة البداية -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <h2>بسم الله الرحمن الرحيم</h2>
+            <h1>نظام شعبة الرعاية الاجتماعية</h1>
+            <p>الإصدار 2.0</p>
+        </div>
+    </div>
+
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h2>تسجيل الدخول</h2>
+                <p>منصة إدارة التقارير والإنجازات الإلكترونية</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="username">👤 اسم المستخدم</label>
+                    <input type="text" id="username" placeholder="أدخل اسم المستخدم" required autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label for="password">🔒 كلمة المرور</label>
+                    <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
+                </div>
+                
+                <button type="submit" class="btn-gold" id="loginBtn">دخول</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- حاوية الإشعارات -->
+    <div id="toast-container"></div>
+
+    <script>
+        // رابط API الذي أرسلته
+        const API_URL = "https://script.google.com/macros/s/AKfycbwmvcuZXQDaSl-c7HTYv493U1CbaV5WXkjgu7XYn8UstyBETcXdh_r_Mo8udfzjT-ozvw/exec";
+
+        // إدارة ظهور شاشة البداية
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                const login = document.getElementById('login-screen');
+                
+                splash.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    login.style.opacity = '1';
+                }, 800); // يتزامن مع وقت الـ CSS transition
+            }, 2000);
+        });
+
+        // دالة عرض الإشعارات (Toast)
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'success' ? '✔' : '❌';
+            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('slide-out');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // معالجة تسجيل الدخول
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const btn = document.getElementById('loginBtn');
+
+            // تغيير حالة الزر
+            btn.innerHTML = 'جاري التحقق...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'login',
+                        username: username,
+                        password: password
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showToast(`مرحباً بك، ${result.userData.jobTitle}`, 'success');
+                    
+                    // حفظ البيانات في الجلسة المؤقتة فقط للأمان
+                    sessionStorage.setItem('token', result.token);
+                    sessionStorage.setItem('userData', JSON.stringify(result.userData));
+
+                    // التوجيه بناءً على الصلاحية بعد ثانية ونصف
+                    setTimeout(() => {
+                        if (result.userData.role === 'Admin') {
+                            window.location.href = 'command-portal.html'; // سيتم إنشاء هذه الصفحة لاحقاً
+                        } else {
+                            window.location.href = 'entry-portal.html';   // سيتم إنشاء هذه الصفحة لاحقاً
+                        }
+                    }, 1500);
+
+                } else {
+                    showToast(result.message, 'error');
+                    btn.innerHTML = 'دخول';
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                showToast('حدث خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً.', 'error');
+                btn.innerHTML = 'دخول';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
