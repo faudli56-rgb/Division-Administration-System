@@ -29,9 +29,7 @@
         .stat-card h3 { font-size: 1rem; color: #666; margin-bottom: 10px; }
         .stat-card .num { font-size: 2rem; font-weight: bold; font-family: var(--font-heading); color: var(--navy-dark); }
 
-        /* إضافات القيادة الجديدة */
         .danger-box { background-color: #ffe3e3; border-right: 5px solid var(--danger); padding: 15px; margin-bottom: 20px; border-radius: 4px; }
-        .missing-dept { color: var(--danger); font-weight: bold; display: inline-block; margin-left: 10px; }
         .btn-share { background-color: #25D366; color: white; display: inline-block; margin-top: 15px; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; width: 100%; transition: 0.3s;}
         .btn-share:hover { background-color: #1EBE55; }
         
@@ -59,11 +57,8 @@
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 15px; text-align: right; border-bottom: 1px solid #eee; }
         th { background-color: var(--gray-light); font-family: var(--font-heading); color: var(--navy-dark); }
-        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; background-color: #e9ecef; color: #495057; }
-
-        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; font-size: 1.5rem; font-weight: bold; color: var(--navy-dark); }
         
-        /* حقوق المطور */
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; font-size: 1.5rem; font-weight: bold; color: var(--navy-dark); }
         .dev-footer { background-color: #E2E8F0; text-align: center; padding: 15px; font-size: 0.9rem; color: var(--navy-dark); margin-top: auto; border-top: 1px solid #CBD5E1; }
         .dev-footer a { color: #25D366; text-decoration: none; font-weight: bold; direction: ltr; display: inline-block; }
     </style>
@@ -82,11 +77,11 @@
 
     <div class="container">
         
-        <!-- قسم المندوبين المتأخرين -->
-        <div class="danger-box" id="missing-box" style="display:none;">
-            <h3 style="color: var(--danger); margin-top: 0;">⚠️ إدارات لم ترفع الموقف اليومي بعد:</h3>
-            <div id="missing-list"></div>
-        </div>
+        <div class="danger-box" id="missing-box" style="display:none;">
+            <h3 style="color: var(--danger); margin-top: 0;">⚠️ حالة رفع الموقف اليومي للإدارات:</h3>
+            <div id="missing-list" style="margin-top: 10px; font-size: 1.1rem;"></div>
+        </div>
+
         <div class="stats-grid">
             <div class="stat-card">
                 <div><h3>إجمالي التقارير</h3><div class="num" id="total-reports">0</div></div>
@@ -132,7 +127,6 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل التقرير -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <h2 id="editTitle" style="color: var(--navy-dark); margin-bottom: 15px; border-bottom: 2px solid var(--gold); padding-bottom: 10px;">تعديل التقرير</h2>
@@ -147,7 +141,6 @@
         </div>
     </div>
 
-    <!-- توقيع المطور -->
     <div class="dev-footer">
         تم تطوير النظام من قبل: <strong>فؤاد العميسي</strong> | 
         <a href="https://wa.me/967777644293" target="_blank" title="تواصل عبر واتساب">📞 777644293</a>
@@ -155,26 +148,21 @@
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbwmvcuZXQDaSl-c7HTYv493U1CbaV5WXkjgu7XYn8UstyBETcXdh_r_Mo8udfzjT-ozvw/exec";
-        
         const token = sessionStorage.getItem('token');
         const userDataString = sessionStorage.getItem('userData');
         if (!token || !userDataString) window.location.href = 'index.html';
-
         const userData = JSON.parse(userDataString);
         if (userData.role !== 'Admin') { alert('ليس لديك صلاحية.'); window.location.href = 'entry-portal.html'; }
 
         document.getElementById('admin-name').innerText = userData.jobTitle + " | " + userData.name;
         
-        let allReportsData = [];
-        let editingReportId = null;
-        let finalPdfUrl = "";
+        let allReportsData = []; let editingReportId = null; let finalPdfUrl = "";
 
         function updateDefaultFileName() {
             const d = new Date();
             const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
             document.getElementById('today-date').innerText = d.toLocaleDateString('ar-SA');
             document.getElementById('customFileName').value = `الموقف اليومي لشعبة الرعاية الاجتماعية ليوم ${days[d.getDay()]} خلال 24 ساعة الماضية بتاريخ. ${d.toLocaleDateString('en-GB')}`;
-            
             const iso = d.toISOString().split('T')[0];
             document.getElementById('startDate').value = iso; document.getElementById('endDate').value = iso;
         }
@@ -184,24 +172,32 @@
             try {
                 const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getDashboardData', token: token }) });
                 const result = await response.json();
-
                 if (result.status === 'success') {
                     document.getElementById('global-loader').style.display = 'none';
                     document.getElementById('total-reports').innerText = result.reports.length;
                     allReportsData = result.reports;
-                    
-                    if(result.missing && result.missing.length > 0) {
-                        document.getElementById('missing-box').style.display = 'block';
-                        document.getElementById('missing-list').innerHTML = result.missing.map(m => `<span class="missing-dept">● ${m}</span>`).join('');
-                    } else {
-                        document.getElementById('missing-box').style.display = 'none';
-                    }
-                    
+                    renderTracking(result.departmentsStatus);
                     renderTable(result.reports);
-                } else {
-                    alert(result.message); if(result.message.includes('جلسة')) logout();
-                }
+                } else { alert(result.message); if(result.message.includes('جلسة')) logout(); }
             } catch (error) { alert('خطأ في الاتصال بالخادم.'); }
+        }
+
+        function renderTracking(depts) {
+            const cont = document.getElementById('missing-list'); 
+            document.getElementById('missing-box').style.display = 'block';
+            cont.innerHTML = '';
+            depts.forEach(d => {
+                const color = d.submitted ? 'green' : 'red';
+                const icon = d.submitted ? '✔' : '❌';
+                cont.innerHTML += `<div style="color:${color}; margin-bottom:5px; font-weight:bold;">${icon} ${d.jobTitle}</div>`;
+            });
+            const missing = depts.filter(d => !d.submitted).map(d => d.jobTitle);
+            if (missing.length > 0) {
+                const msg = `تذكير هام للإدارات التالية: \n${missing.join('، ')} \n\nيرجى سرعة رفع الموقف اليومي عبر النظام.`;
+                cont.innerHTML += `<br><a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" class="btn-share" style="color:white; padding:10px; border-radius:5px; display:inline-block; margin-top:10px;">📢 إرسال تذكير واتساب للمتأخرين</a>`;
+            } else {
+                cont.innerHTML += `<br><p style="color:green; font-weight:bold; margin-top:10px;">✔ تم استلام جميع التقارير اليوم بنجاح.</p>`;
+            }
         }
 
         function renderTable(reports) {
@@ -210,12 +206,7 @@
             reports.slice(0, 50).forEach(rep => {
                 const dateObj = new Date(rep.date);
                 const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-family: monospace;">${rep.reportId}</td>
-                    <td>${dateObj.toLocaleDateString('ar-SA')} - ${dateObj.toLocaleTimeString('ar-SA')}</td>
-                    <td>${rep.jobTitle}</td>
-                    <td><button class="btn-generate" style="padding: 5px 15px; font-size: 0.9rem; width: auto;" onclick="openEdit('${rep.reportId}')">✏️ تعديل</button></td>
-                `;
+                tr.innerHTML = `<td>${rep.reportId}</td><td>${dateObj.toLocaleDateString('ar-SA')}</td><td>${rep.jobTitle}</td><td><button class="btn-generate" style="padding: 5px 15px; font-size: 0.9rem; width: auto;" onclick="openEdit('${rep.reportId}')">✏️ تعديل</button></td>`;
                 tbody.appendChild(tr);
             });
         }
@@ -243,27 +234,20 @@
             const start = document.getElementById('startDate').value; const end = document.getElementById('endDate').value;
             const btn = document.getElementById('generateBtn'); const linksDiv = document.getElementById('download-links');
             if (!start || !end) { alert('يرجى تحديد تواريخ البداية والنهاية'); return; }
-            btn.innerHTML = 'جاري دمج التقارير وإنشاء الملفات... يرجى الانتظار ⏳'; btn.disabled = true; linksDiv.style.display = 'none';
-
+            btn.innerHTML = 'جاري دمج التقارير...'; btn.disabled = true; linksDiv.style.display = 'none';
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST', body: JSON.stringify({ action: 'generatePeriodicReport', token: token, startDate: start, endDate: end, customFileName: document.getElementById('customFileName').value })
-                });
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'generatePeriodicReport', token: token, startDate: start, endDate: end, customFileName: document.getElementById('customFileName').value }) });
                 const result = await response.json();
                 if (result.status === 'success') {
-                    document.getElementById('link-pdf').href = result.links.pdf;
-                    document.getElementById('link-word').href = result.links.word;
-                    document.getElementById('link-excel').href = result.links.excel;
-                    finalPdfUrl = result.links.pdf;
-                    linksDiv.style.display = 'block'; btn.innerHTML = '⚙️ إعادة إنشاء التقرير';
+                    document.getElementById('link-pdf').href = result.links.pdf; document.getElementById('link-word').href = result.links.word; document.getElementById('link-excel').href = result.links.excel;
+                    finalPdfUrl = result.links.pdf; linksDiv.style.display = 'block'; btn.innerHTML = '⚙️ إعادة إنشاء التقرير';
                 } else { alert(result.message); btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي'; }
-            } catch (error) { alert('حدث خطأ أثناء إنشاء التقرير.'); btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي'; }
+            } catch (error) { alert('خطأ.'); btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي'; }
             btn.disabled = false;
         }
 
         function shareToApp() {
-            const fileName = document.getElementById('customFileName').value;
-            if (navigator.share) { navigator.share({ title: fileName, text: "مرفق الموقف المجمع:", url: finalPdfUrl }).catch(console.error); } 
+            if (navigator.share) { navigator.share({ title: "تقرير الموقف", url: finalPdfUrl }); } 
             else { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent("مرفق الموقف المجمع: " + finalPdfUrl)}`); }
         }
 
