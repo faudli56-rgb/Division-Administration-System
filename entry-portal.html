@@ -195,13 +195,13 @@
         document.getElementById('display-job').innerText = userData.jobTitle;
         document.getElementById('live-date').innerText = new Date().toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
         
+      let isSubmitted = false;
         function checkTimeForReminder() {
-            if (new Date().getHours() >= 16) {
+            if (new Date().getHours() >= 16 && !isSubmitted) {
                 document.getElementById('time-alert').style.display = 'block';
             }
         }
         setInterval(checkTimeForReminder, 60000); checkTimeForReminder();
-        
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
         
         function showToast(msg, type='success') {
