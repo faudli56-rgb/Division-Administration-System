@@ -96,7 +96,7 @@
         <a href="#" onclick="showPage('home')" id="link-home" class="active-link">🏠 الرئيسية</a>
         <a href="#" onclick="showPage('tracking')" id="link-tracking">📋 متابعة الإدارات</a>
         <a href="#" onclick="showPage('inbox')" id="link-inbox">📥 الوارد و الأرشيف</a>
-        <a href="#" onclick="showPage('achievements')" id="link-achievements" style="color: var(--gold);">⭐ إنجازات رئيس الشعبة</a>
+        <a href="#" onclick="showPage('achievements')" id="link-achievements" style="color: var(--gold);">⭐ إنجازات رئاسة الشعبة</a>
         <a href="#" onclick="showPage('export')" id="link-export">📄 استخراج الموقف الرسمي</a>
     </div>
 
@@ -113,6 +113,7 @@
 
     <div class="container">
         
+        <!-- الصفحة 1: الرئيسية -->
         <div id="page-home" class="page-section active">
             <div class="stats-grid">
                 <div class="stat-card" onclick="showPage('tracking')">
@@ -138,6 +139,7 @@
             </div>
         </div>
 
+        <!-- الصفحة 2: متابعة الإدارات -->
         <div id="page-tracking" class="page-section">
             <h2 style="font-family: var(--font-heading); margin-bottom: 15px;">📋 متابعة حالة الإدارات</h2>
             <div class="danger-box">
@@ -146,6 +148,7 @@
             </div>
         </div>
 
+        <!-- الصفحة 3: الوارد والأرشيف -->
         <div id="page-inbox" class="page-section">
             <div class="tabs-header">
                 <button class="tab-btn active" onclick="switchInboxTab('recent')" id="tab-recent">آخر التقارير (24 ساعة)</button>
@@ -171,6 +174,7 @@
             </div>
         </div>
 
+        <!-- الصفحة 4: استخراج الموقف -->
         <div id="page-export" class="page-section">
             <div class="table-container" style="background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-light) 100%); color: white;">
                 <h2 style="font-family: var(--font-heading); color: var(--gold); margin-bottom: 20px;">استخراج تقرير الموقف</h2>
@@ -193,28 +197,37 @@
             </div>
         </div>
 
+        <!-- الصفحة 5: إنجازات الرئاسة -->
         <div id="page-achievements" class="page-section">
             
             <div class="card">
-                <h3>⭐ إضافة إنجاز رئيس الشعبة</h3>
+                <h3>⭐ إضافة إنجازات رئاسة الشعبة</h3>
                 <div class="form-group">
-                    <label>عنوان الإنجاز</label>
-                    <input type="text" id="ach_title" class="form-control" placeholder="أدخل عنوان الإنجاز..." required>
+                    <label>المهام</label>
+                    <textarea id="ach_tasks" class="form-control" placeholder="اكتب المهام..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>تفاصيل الإنجاز</label>
-                    <textarea id="ach_desc" class="form-control" placeholder="اكتب تفاصيل الإنجاز..." required></textarea>
+                    <label>التحركات</label>
+                    <textarea id="ach_movements" class="form-control" placeholder="اكتب التحركات..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>الزيارات</label>
+                    <textarea id="ach_visits" class="form-control" placeholder="اكتب الزيارات..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>المطالب</label>
+                    <textarea id="ach_demands" class="form-control" placeholder="اكتب المطالب..."></textarea>
                 </div>
                 <button class="btn-generate" onclick="addPresidencyAchievement()" id="btn-add-ach" style="width: 100%; padding: 12px; font-size: 1.1rem;">➕ حفظ الإنجاز واعتماده</button>
             </div>
             
             <div class="card">
-                <h3>سجل إنجازات رئيس الشعبة</h3>
+                <h3>سجل إنجازات رئاسة الشعبة</h3>
                 <div style="overflow-x: auto;">
-                    <table style="width: 100%;">
-                        <thead><tr><th>التاريخ</th><th>العنوان</th><th>التفاصيل</th><th>الحالة</th></tr></thead>
+                    <table style="width: 100%; min-width: 600px;">
+                        <thead><tr><th>التاريخ</th><th>المهام</th><th>التحركات</th><th>الزيارات</th><th>المطالب</th></tr></thead>
                         <tbody id="presidency-achievements-body">
-                            <tr><td colspan="4" style="text-align:center;">جاري جلب الإنجازات...</td></tr>
+                            <tr><td colspan="5" style="text-align:center;">جاري جلب الإنجازات...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -224,6 +237,7 @@
 
     </div>
 
+    <!-- نافذة التعديل والتفاصيل (Modal) -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <h2 id="editTitle" style="color: var(--navy-dark); margin-bottom: 15px; border-bottom: 2px solid var(--gold); padding-bottom: 10px;">تفاصيل وتعديل التقرير</h2>
@@ -303,32 +317,64 @@
             const tbody = document.getElementById('presidency-achievements-body');
             const fragment = document.createDocumentFragment();
             tbody.innerHTML = '';
-            if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا توجد إنجازات مسجلة</td></tr>'; return; }
+            if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">لا توجد إنجازات مسجلة</td></tr>'; return; }
             
             list.forEach(ach => {
+                let tasks = '', movements = '', visits = '', demands = '';
+                try {
+                    let parsed = JSON.parse(ach.desc);
+                    tasks = parsed.tasks || '';
+                    movements = parsed.movements || '';
+                    visits = parsed.visits || '';
+                    demands = parsed.demands || '';
+                } catch(e) {
+                    // للتوافق مع الإدخالات القديمة
+                    tasks = ach.title + ":\n" + ach.desc;
+                }
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td>${new Date(ach.date).toLocaleDateString('ar-SA')}</td>
-                <td style="font-weight:bold;">${ach.title}</td>
-                <td style="white-space: pre-wrap; font-size: 0.9rem;">${ach.desc}</td>
-                <td style="color:green; font-weight:bold;">✔ ${ach.status}</td>`;
+                <td style="white-space: pre-wrap; font-size: 0.9rem;">${tasks}</td>
+                <td style="white-space: pre-wrap; font-size: 0.9rem;">${movements}</td>
+                <td style="white-space: pre-wrap; font-size: 0.9rem;">${visits}</td>
+                <td style="white-space: pre-wrap; font-size: 0.9rem;">${demands}</td>`;
                 fragment.appendChild(tr);
             });
             tbody.appendChild(fragment);
         }
 
         async function addPresidencyAchievement() {
-            const title = document.getElementById('ach_title').value.trim();
-            const desc = document.getElementById('ach_desc').value.trim();
-            if(!title || !desc) { showToast('يرجى ملء عنوان وتفاصيل الإنجاز', 'error'); return; }
+            const tasks = document.getElementById('ach_tasks').value.trim();
+            const movements = document.getElementById('ach_movements').value.trim();
+            const visits = document.getElementById('ach_visits').value.trim();
+            const demands = document.getElementById('ach_demands').value.trim();
+            
+            if(!tasks && !movements && !visits && !demands) { 
+                showToast('يرجى ملء حقل واحد على الأقل', 'error'); 
+                return; 
+            }
             
             const btn = document.getElementById('btn-add-ach');
             btn.innerText = 'جاري الحفظ... ⏳'; btn.disabled = true;
 
             try {
-                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'addPresidencyAchievement', token: token, title: title, description: desc }) });
+                const response = await fetch(API_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ 
+                        action: 'addPresidencyAchievement', 
+                        token: token, 
+                        tasks: tasks, 
+                        movements: movements,
+                        visits: visits,
+                        demands: demands
+                    }) 
+                });
                 const result = await response.json();
                 if (result.status === 'success') {
-                    document.getElementById('ach_title').value = ''; document.getElementById('ach_desc').value = '';
+                    document.getElementById('ach_tasks').value = '';
+                    document.getElementById('ach_movements').value = '';
+                    document.getElementById('ach_visits').value = '';
+                    document.getElementById('ach_demands').value = '';
                     showToast('تم حفظ الإنجاز ودمجه بنجاح!');
                     fetchAchievementsData(); 
                 } else { showToast(result.message, 'error'); }
