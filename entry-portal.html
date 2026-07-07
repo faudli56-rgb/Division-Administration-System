@@ -14,9 +14,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body { font-family: var(--font-body); background-color: var(--gray-light); color: var(--navy-dark); display: flex; flex-direction: column; min-height: 100vh; }
-
         header { background-color: var(--navy-dark); color: var(--white); padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; border-bottom: 4px solid var(--gold); }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .header-top h1 { font-family: var(--font-heading); font-size: 1.2rem; color: var(--gold); }
@@ -24,8 +22,8 @@
         .btn-logout:hover { background-color: var(--danger); border-color: var(--danger); }
         .user-info { background-color: var(--navy-light); padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
         .user-details strong { display: block; font-size: 1.1rem; color: var(--gold); margin-bottom: 5px; }
-
         .container { max-width: 800px; margin: 20px auto; padding: 0 15px; flex: 1; width: 100%;}
+        
         .card { background-color: var(--white); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 3px solid var(--navy-dark); }
         .card h3 { font-family: var(--font-heading); margin-bottom: 15px; color: var(--navy-dark); }
         .form-group { margin-bottom: 15px; } .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
@@ -54,7 +52,6 @@
         #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
         .toast { background-color: var(--navy-dark); color: var(--white); padding: 12px 24px; border-radius: 8px; font-family: var(--font-body); font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 10px; }
 
-        /* حقوق المطور وتنبيه الوقت */
         .dev-footer { background-color: #E2E8F0; text-align: center; padding: 15px; font-size: 0.9rem; color: var(--navy-dark); margin-top: auto; border-top: 1px solid #CBD5E1; }
         .dev-footer a { color: #25D366; text-decoration: none; font-weight: bold; direction: ltr; display: inline-block; }
         #time-alert { display:none; background: #E63946; color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1.1rem; border-bottom: 3px solid var(--gold); }
@@ -83,6 +80,14 @@
     </header>
 
     <div class="container" id="form-container">
+        
+        <div class="card" style="border-top-color: var(--success);">
+            <h3>⭐ إضافة إنجاز للإدارة</h3>
+            <div class="form-group"><label>عنوان الإنجاز</label><input type="text" id="ach_title" class="form-control" placeholder="أدخل عنوان الإنجاز..."></div>
+            <div class="form-group"><label>تفاصيل الإنجاز</label><textarea id="ach_desc" class="form-control" placeholder="اكتب تفاصيل الإنجاز..."></textarea></div>
+            <button class="btn-outline" style="border-color: var(--success); color: var(--success);" id="ach_btn" onclick="submitAchievement()">رفع الإنجاز للقيادة</button>
+        </div>
+
         <form id="reportForm">
             <div class="card">
                 <h3>📌 معلومات التقرير</h3>
@@ -122,7 +127,6 @@
         </form>
     </div>
 
-    <!-- النوافذ المنبثقة للخسائر -->
     <div id="humanModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h3 style="font-family: var(--font-heading); color: var(--navy-dark);">إضافة خسارة بشرية</h3><button class="close-btn" onclick="closeModal('humanModal')">×</button></div>
@@ -190,16 +194,16 @@
         document.getElementById('display-name').innerText = userData.name;
         document.getElementById('display-job').innerText = userData.jobTitle;
         document.getElementById('live-date').innerText = new Date().toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
-
-        // تذكير الساعة 4 مساءً
+        
         function checkTimeForReminder() {
             if (new Date().getHours() >= 16) {
                 document.getElementById('time-alert').style.display = 'block';
             }
         }
         setInterval(checkTimeForReminder, 60000); checkTimeForReminder();
-
+        
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
+        
         function showToast(msg, type='success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div'); toast.className = `toast`;
@@ -216,13 +220,13 @@
             humanLossesArray.push({ militaryId: document.getElementById('h_militaryId').value, rank: document.getElementById('h_rank').value, deservedRank: document.getElementById('h_deservedRank').value, name: document.getElementById('h_name').value, unit: document.getElementById('h_unit').value, date: document.getElementById('h_date').value, place: document.getElementById('h_place').value, reason: document.getElementById('h_reason').value, type: document.getElementById('h_type').value, gov: document.getElementById('h_gov').value, district: document.getElementById('h_district').value, uzla: document.getElementById('h_uzla').value, status: document.getElementById('h_status').value });
             renderLosses(); this.reset(); closeModal('humanModal'); showToast('تمت إضافة الخسارة البشرية');
         });
-
+        
         document.getElementById('materialLossForm').addEventListener('submit', function(e) {
             e.preventDefault();
             materialLossesArray.push({ type: document.getElementById('m_type').value, model: document.getElementById('m_model').value, number: document.getElementById('m_number').value, damageType: document.getElementById('m_damageType').value, destructionLevel: document.getElementById('m_destructionLevel').value, reason: document.getElementById('m_reason').value, unit: document.getElementById('m_unit').value, place: document.getElementById('m_place').value, date: document.getElementById('m_date').value, notes: document.getElementById('m_notes').value });
             renderLosses(); this.reset(); closeModal('materialModal'); showToast('تمت إضافة الخسارة المادية');
         });
-
+        
         function renderLosses() {
             document.getElementById('human-losses-container').innerHTML = humanLossesArray.map((loss, index) => `<div class="loss-item"><div><strong>👤 ${loss.name}</strong> - ${loss.rank}</div><button type="button" class="btn-delete-item" onclick="deleteHumanLoss(${index})">🗑</button></div>`).join('');
             document.getElementById('material-losses-container').innerHTML = materialLossesArray.map((loss, index) => `<div class="loss-item"><div><strong>🚜 ${loss.type}</strong> - ${loss.damageType || 'بدون تحديد'}</div><button type="button" class="btn-delete-item" onclick="deleteMaterialLoss(${index})">🗑</button></div>`).join('');
@@ -252,46 +256,33 @@
                 else { showToast(result.message, 'error'); btn.innerHTML = '📤 إرسال التقرير النهائي'; btn.disabled = false; if(result.message.includes('جلسة')) setTimeout(logout, 2000); }
             } catch (error) { showToast('حدث خطأ في الاتصال.', 'error'); btn.innerHTML = '📤 إرسال التقرير النهائي'; btn.disabled = false; }
         });
-        async function submitAchievement() {
-    const title = document.getElementById('ach_title').value.trim();
-    const desc = document.getElementById('ach_desc').value.trim();
-    const btn = document.getElementById('ach_btn');
 
-    if (!title || !desc) { 
-        alert('يرجى تعبئة عنوان وتفاصيل الإنجاز.'); 
-        return; 
-    }
-    
-    btn.innerText = 'جاري رفع الإنجاز... ⏳'; 
-    btn.disabled = true;
-    
-    try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: 'submitMandoobAchievement',
-                token: token,
-                jobTitle: userData.jobTitle,
-                title: title,
-                description: desc
-            })
-        });
-        
-        const result = await response.json();
-        if (result.status === 'success') {
-            alert('تم رفع الإنجاز للقيادة بنجاح! وهو الآن في انتظار الاعتماد.');
-            document.getElementById('ach_title').value = '';
-            document.getElementById('ach_desc').value = '';
-        } else {
-            alert('خطأ: ' + result.message);
+        async function submitAchievement() {
+            const title = document.getElementById('ach_title').value.trim();
+            const desc = document.getElementById('ach_desc').value.trim();
+            const btn = document.getElementById('ach_btn');
+            
+            if (!title || !desc) { 
+                showToast('يرجى تعبئة عنوان وتفاصيل الإنجاز.', 'error'); return;
+            }
+            
+            btn.innerText = 'جاري رفع الإنجاز... ⏳'; btn.disabled = true;
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'submitMandoobAchievement', token: token, jobTitle: userData.jobTitle, title: title, description: desc })
+                });
+                
+                const result = await response.json();
+                if (result.status === 'success') {
+                    showToast('تم رفع الإنجاز واعتماده بنجاح!');
+                    document.getElementById('ach_title').value = ''; document.getElementById('ach_desc').value = '';
+                } else { showToast('خطأ: ' + result.message, 'error'); }
+            } catch (error) { showToast('حدث خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً.', 'error'); }
+            
+            btn.innerText = 'رفع الإنجاز للقيادة'; btn.disabled = false;
         }
-    } catch (error) {
-        alert('حدث خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً.');
-    }
-    
-    btn.innerText = 'رفع الإنجاز للقيادة'; 
-    btn.disabled = false;
-}
     </script>
 </body>
 </html>
