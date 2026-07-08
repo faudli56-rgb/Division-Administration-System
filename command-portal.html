@@ -70,12 +70,10 @@
         
         .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 4000; font-size: 1.5rem; font-weight: bold; color: var(--navy-dark); }
         
-        /* Toast Notification Styles */
         #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
         .toast { background-color: var(--navy-dark); color: var(--white); padding: 12px 24px; border-radius: 8px; font-family: var(--font-body); font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 10px; animation: slideUp 0.3s ease-out;}
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* Custom Cards for Achievements */
         .card { background-color: var(--white); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 3px solid var(--navy-dark); }
         .card h3 { font-family: var(--font-heading); margin-bottom: 15px; color: var(--navy-dark); }
         .form-group { margin-bottom: 15px; } 
@@ -113,7 +111,6 @@
 
     <div class="container">
         
-        <!-- الصفحة 1: الرئيسية -->
         <div id="page-home" class="page-section active">
             <div class="stats-grid">
                 <div class="stat-card" onclick="showPage('tracking')">
@@ -139,7 +136,6 @@
             </div>
         </div>
 
-        <!-- الصفحة 2: متابعة الإدارات -->
         <div id="page-tracking" class="page-section">
             <h2 style="font-family: var(--font-heading); margin-bottom: 15px;">📋 متابعة حالة الإدارات</h2>
             <div class="danger-box">
@@ -148,7 +144,6 @@
             </div>
         </div>
 
-        <!-- الصفحة 3: الوارد والأرشيف -->
         <div id="page-inbox" class="page-section">
             <div class="tabs-header">
                 <button class="tab-btn active" onclick="switchInboxTab('recent')" id="tab-recent">آخر التقارير (24 ساعة)</button>
@@ -174,18 +169,41 @@
             </div>
         </div>
 
-        <!-- الصفحة 4: استخراج الموقف -->
         <div id="page-export" class="page-section">
             <div class="table-container" style="background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-light) 100%); color: white;">
                 <h2 style="font-family: var(--font-heading); color: var(--gold); margin-bottom: 20px;">استخراج تقرير الموقف</h2>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
-                    <div style="flex:1;"><label>من تاريخ:</label><input type="date" id="startDate" style="width:100%; padding:10px; border-radius:5px; border:none;"></div>
-                    <div style="flex:1;"><label>إلى تاريخ:</label><input type="date" id="endDate" style="width:100%; padding:10px; border-radius:5px; border:none;"></div>
-                </div>
-                <label>اسم الملف (يمكنك التعديل):</label>
-                <input type="text" id="customFileName" style="width: 100%; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; font-weight:bold; color: var(--navy-dark);">
-                <button class="btn-generate" id="generateBtn" style="width: 100%; font-size:1.1rem; padding:15px;" onclick="generateReport()">⚙️ دمج واستخراج التقرير الرسمي</button>
                 
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <div style="flex:1;"><label>من تاريخ:</label><input type="date" id="startDate" style="width:100%; padding:10px; border-radius:5px; border:none; color:#000;"></div>
+                    <div style="flex:1;"><label>إلى تاريخ:</label><input type="date" id="endDate" style="width:100%; padding:10px; border-radius:5px; border:none; color:#000;"></div>
+                </div>
+                
+                <button class="btn-generate" id="previewBtn" style="width: 100%; font-size:1.1rem; padding:15px;" onclick="previewReport()">👁️ تجميع ومعاينة التقرير قبل التنزيل</button>
+                
+                <div id="preview-section" style="display: none; margin-top: 25px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
+                    <h3 style="color: var(--gold); margin-bottom: 15px;">📝 معاينة وتعديل المحتوى (تعديلاتك هنا ستطبع في التقرير):</h3>
+                    
+                    <label>عنوان واسم الملف:</label>
+                    <input type="text" id="customFileName" style="width: 100%; padding: 12px; border-radius: 5px; border: none; margin-bottom: 15px; font-weight:bold; font-size:1.1rem; color: var(--navy-dark);">
+                    
+                    <label>المهام المنفذة:</label>
+                    <textarea id="p_tasks" style="width: 100%; min-height: 150px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
+
+                    <label>التحركات:</label>
+                    <textarea id="p_movements" style="width: 100%; min-height: 100px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
+
+                    <label>الحوادث:</label>
+                    <textarea id="p_incidents" style="width: 100%; min-height: 80px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
+
+                    <label>الزيارات:</label>
+                    <textarea id="p_visits" style="width: 100%; min-height: 80px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
+
+                    <label>المطالب:</label>
+                    <textarea id="p_demands" style="width: 100%; min-height: 80px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
+                    
+                    <button class="btn-generate" id="generateBtn" style="width: 100%; font-size:1.1rem; padding:15px; background-color: var(--success); color: white;" onclick="generateFinalReport()">📥 تأكيد واعتماد لاستخراج الملفات النهائية</button>
+                </div>
+
                 <div id="download-links">
                     <h3 style="margin-bottom: 15px; color: var(--gold);">✔ تم تجهيز الموقف بنجاح</h3>
                     <a href="#" target="_blank" class="download-btn" style="background:#E63946;" id="link-pdf">📥 تحميل PDF</a>
@@ -197,7 +215,6 @@
             </div>
         </div>
 
-        <!-- الصفحة 5: إنجازات الرئاسة -->
         <div id="page-achievements" class="page-section">
             
             <div class="card">
@@ -237,7 +254,6 @@
 
     </div>
 
-    <!-- نافذة التعديل والتفاصيل (Modal) -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <h2 id="editTitle" style="color: var(--navy-dark); margin-bottom: 15px; border-bottom: 2px solid var(--gold); padding-bottom: 10px;">تفاصيل وتعديل التقرير</h2>
@@ -271,6 +287,9 @@
         let currentTab = 'recent';
         let editingReportId = null; 
         let finalPdfUrl = "";
+        
+        // متغيرات حفظ بيانات المعاينة
+        let currentReportMeta = {};
 
         function showToast(msg, type='success') {
             const container = document.getElementById('toast-container');
@@ -279,7 +298,6 @@
             container.appendChild(toast); setTimeout(() => toast.remove(), 3000);
         }
 
-        // ==================== التنقل ====================
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('sidebarOverlay').classList.toggle('open');
@@ -301,7 +319,6 @@
             applyFilters();
         }
 
-        // ==================== دوال الإنجازات ====================
         async function fetchAchievementsData(silent = false) {
             try {
                 const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getAchievementsList', token: token }) });
@@ -328,7 +345,6 @@
                     visits = parsed.visits || '';
                     demands = parsed.demands || '';
                 } catch(e) {
-                    // للتوافق مع الإدخالات القديمة
                     tasks = ach.title + ":\n" + ach.desc;
                 }
 
@@ -350,8 +366,7 @@
             const demands = document.getElementById('ach_demands').value.trim();
             
             if(!tasks && !movements && !visits && !demands) { 
-                showToast('يرجى ملء حقل واحد على الأقل', 'error'); 
-                return; 
+                showToast('يرجى ملء حقل واحد على الأقل', 'error'); return; 
             }
             
             const btn = document.getElementById('btn-add-ach');
@@ -360,21 +375,12 @@
             try {
                 const response = await fetch(API_URL, { 
                     method: 'POST', 
-                    body: JSON.stringify({ 
-                        action: 'addPresidencyAchievement', 
-                        token: token, 
-                        tasks: tasks, 
-                        movements: movements,
-                        visits: visits,
-                        demands: demands
-                    }) 
+                    body: JSON.stringify({ action: 'addPresidencyAchievement', token: token, tasks: tasks, movements: movements, visits: visits, demands: demands }) 
                 });
                 const result = await response.json();
                 if (result.status === 'success') {
-                    document.getElementById('ach_tasks').value = '';
-                    document.getElementById('ach_movements').value = '';
-                    document.getElementById('ach_visits').value = '';
-                    document.getElementById('ach_demands').value = '';
+                    document.getElementById('ach_tasks').value = ''; document.getElementById('ach_movements').value = '';
+                    document.getElementById('ach_visits').value = ''; document.getElementById('ach_demands').value = '';
                     showToast('تم حفظ الإنجاز ودمجه بنجاح!');
                     fetchAchievementsData(); 
                 } else { showToast(result.message, 'error'); }
@@ -382,17 +388,15 @@
             btn.innerText = '➕ حفظ الإنجاز واعتماده'; btn.disabled = false;
         }
 
-        // ==================== دوال لوحة القيادة (التقارير والاستخراج) ====================
-        function updateDefaultFileName() {
+        function updateDefaultDate() {
             const d = new Date();
-            const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-            document.getElementById('customFileName').value = `الموقف اليومي لشعبة الرعاية الاجتماعية ليوم ${days[d.getDay()]} بتاريخ ${d.toLocaleDateString('en-GB')}`;
             const iso = d.toISOString().split('T')[0];
-            document.getElementById('startDate').value = iso; document.getElementById('endDate').value = iso;
+            document.getElementById('startDate').value = iso; 
+            document.getElementById('endDate').value = iso;
         }
 
         async function fetchDashboardData(silent = false) {
-            if(!silent) updateDefaultFileName();
+            if(!silent) updateDefaultDate();
             try {
                 const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getDashboardData', token: token }) });
                 const result = await response.json();
@@ -416,17 +420,33 @@
             const cont = document.getElementById('missing-list');
             cont.innerHTML = '';
             let submitted = 0;
+            
             depts.forEach(d => {
                 if(d.submitted) submitted++;
-                const color = d.submitted ? 'green' : '#E63946'; const icon = d.submitted ? '✔' : '❌';
+                const color = d.submitted ? 'green' : '#E63946'; 
+                const icon = d.submitted ? '✔' : '❌';
                 cont.innerHTML += `<div style="color:${color}; margin-bottom:8px; font-weight:bold;">${icon} ${d.jobTitle}</div>`;
             });
-            document.getElementById('total-depts').innerText = depts.length; document.getElementById('submitted-count').innerText = submitted;
+            
+            document.getElementById('total-depts').innerText = depts.length; 
+            document.getElementById('submitted-count').innerText = submitted;
+            
             const missing = depts.filter(d => !d.submitted).map(d => d.jobTitle);
+            
             if (missing.length > 0) {
                 const msg = `تذكير هام للإدارات التالية: \n${missing.join('، ')} \n\nيرجى سرعة رفع الموقف اليومي.`;
-                cont.innerHTML += `<a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" class="btn-share" style="display:block;">📢 تذكير واتساب للمتأخرين</a>`;
-            } else { cont.innerHTML += `<p style="color:green; font-weight:bold; margin-top:10px;">✔ تم استلام جميع التقارير.</p>`; }
+                cont.innerHTML += `
+                <div style="margin-top: 25px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
+                    <a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" style="background-color: #25D366; color: white; display: inline-block; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%;">
+                        📢 تذكير واتساب للمتأخرين
+                    </a>
+                </div>`;
+            } else { 
+                cont.innerHTML += `
+                <div style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
+                    <p style="color:green; font-weight:bold; margin:0;">✔ تم استلام جميع التقارير.</p>
+                </div>`; 
+            }
         }
 
         function applyFilters() {
@@ -456,7 +476,7 @@
             
             if (reports.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">لا توجد تقارير مطابقة</td></tr>'; return; }
             
-            reports.slice(0, 100).forEach(rep => { // Limit render for speed
+            reports.slice(0, 100).forEach(rep => {
                 const dObj = new Date(rep.date); 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td>${rep.reportId}</td><td>${dObj.toLocaleDateString('ar-SA')} ${dObj.toLocaleTimeString('ar-SA')}</td><td>${rep.jobTitle}</td>
@@ -486,22 +506,86 @@
             fetchDashboardData(true);
         }
 
-        async function generateReport() {
-            const start = document.getElementById('startDate').value; const end = document.getElementById('endDate').value;
-            const btn = document.getElementById('generateBtn'); const linksDiv = document.getElementById('download-links');
+        // --- الدوال الجديدة الخاصة بالمعاينة والاستخراج ---
+        
+        async function previewReport() {
+            const start = document.getElementById('startDate').value; 
+            const end = document.getElementById('endDate').value;
+            const btn = document.getElementById('previewBtn');
+            const previewSection = document.getElementById('preview-section');
+            const linksDiv = document.getElementById('download-links');
+
             if (!start || !end) { showToast('يرجى تحديد تواريخ البداية والنهاية', 'error'); return; }
             
-            btn.innerHTML = 'جاري دمج التقارير والإنجازات... ⏳'; btn.disabled = true; linksDiv.style.display = 'none';
+            btn.innerHTML = 'جاري تجميع البيانات... ⏳'; btn.disabled = true; 
+            previewSection.style.display = 'none'; linksDiv.style.display = 'none';
+
             try {
-                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'generatePeriodicReport', token: token, startDate: start, endDate: end, customFileName: document.getElementById('customFileName').value }) });
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'previewConsolidatedReport', token: token, startDate: start, endDate: end }) });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    // تعبئة البيانات في واجهة المعاينة
+                    document.getElementById('customFileName').value = result.suggestedTitle;
+                    document.getElementById('p_tasks').value = result.mergedData.tasks;
+                    document.getElementById('p_movements').value = result.mergedData.movements;
+                    document.getElementById('p_incidents').value = result.mergedData.incidents;
+                    document.getElementById('p_visits').value = result.mergedData.visits;
+                    document.getElementById('p_demands').value = result.mergedData.demands;
+                    
+                    // حفظ المتغيرات لإرسالها لاحقاً
+                    currentReportMeta = { reportDayName: result.reportDayName, reportDateString: result.reportDateString };
+
+                    previewSection.style.display = 'block';
+                    btn.innerHTML = '👁️ إعادة تجميع ومعاينة التقرير';
+                    showToast('تم تجميع البيانات، يمكنك التعديل عليها الآن أسفل الشاشة');
+                    
+                    // تمرير الشاشة للأسفل لرؤية المعاينة
+                    previewSection.scrollIntoView({ behavior: 'smooth' });
+                } else { showToast(result.message, 'error'); btn.innerHTML = '👁️ تجميع ومعاينة التقرير قبل التنزيل'; }
+            } catch (error) { showToast('حدث خطأ أثناء الاتصال.', 'error'); btn.innerHTML = '👁️ تجميع ومعاينة التقرير قبل التنزيل'; }
+            btn.disabled = false;
+        }
+
+        async function generateFinalReport() {
+            const start = document.getElementById('startDate').value; 
+            const end = document.getElementById('endDate').value;
+            const customFileName = document.getElementById('customFileName').value;
+            const btn = document.getElementById('generateBtn'); 
+            const linksDiv = document.getElementById('download-links');
+            
+            if (!customFileName) { showToast('يرجى كتابة عنوان واسم للملف', 'error'); return; }
+
+            const editedMergedData = {
+                tasks: document.getElementById('p_tasks').value,
+                movements: document.getElementById('p_movements').value,
+                incidents: document.getElementById('p_incidents').value,
+                visits: document.getElementById('p_visits').value,
+                demands: document.getElementById('p_demands').value
+            };
+
+            btn.innerHTML = 'جاري إنشاء وتجهيز الملفات... ⏳'; btn.disabled = true; linksDiv.style.display = 'none';
+            try {
+                const response = await fetch(API_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ 
+                        action: 'generateFinalFiles', token: token, startDate: start, endDate: end, customFileName: customFileName,
+                        mergedData: editedMergedData, reportDayName: currentReportMeta.reportDayName, reportDateString: currentReportMeta.reportDateString
+                    }) 
+                });
                 const result = await response.json();
                 if (result.status === 'success') {
                     document.getElementById('link-pdf').href = result.links.pdf;
-                    document.getElementById('link-word').href = result.links.word; document.getElementById('link-excel').href = result.links.excel;
-                    finalPdfUrl = result.links.pdf; linksDiv.style.display = 'block'; btn.innerHTML = '⚙️ إعادة إنشاء التقرير';
-                    showToast('تم تجهيز الملفات بنجاح');
-                } else { showToast(result.message, 'error'); btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي'; }
-            } catch (error) { showToast('حدث خطأ أثناء إنشاء التقرير.', 'error'); btn.innerHTML = '⚙️ دمج واستخراج التقرير الرسمي'; }
+                    document.getElementById('link-word').href = result.links.word; 
+                    document.getElementById('link-excel').href = result.links.excel;
+                    finalPdfUrl = result.links.pdf; 
+                    linksDiv.style.display = 'block'; 
+                    btn.innerHTML = '📥 تأكيد واعتماد لاستخراج الملفات النهائية';
+                    showToast('تم تجهيز الملفات بنجاح ويمكنك تنزيلها');
+                    
+                    linksDiv.scrollIntoView({ behavior: 'smooth' });
+                } else { showToast(result.message, 'error'); btn.innerHTML = '📥 تأكيد واعتماد لاستخراج الملفات النهائية'; }
+            } catch (error) { showToast('حدث خطأ أثناء إنشاء التقرير.', 'error'); btn.innerHTML = '📥 تأكيد واعتماد لاستخراج الملفات النهائية'; }
             btn.disabled = false;
         }
 
@@ -521,7 +605,6 @@
         window.onload = function() {
             fetchDashboardData();
             fetchAchievementsData();
-            // تحديث تلقائي صامت كل 60 ثانية
             setInterval(() => { fetchDashboardData(true); fetchAchievementsData(true); }, 60000);
         };
     </script>
