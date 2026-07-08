@@ -81,6 +81,11 @@
         .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: var(--font-body); font-size: 0.95rem; }
         .form-control:focus { outline: none; border-color: var(--gold); }
         textarea.form-control { resize: vertical; min-height: 80px; }
+        
+        /* تأثيرات زر الذكاء الاصطناعي */
+        .btn-ai { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3); }
+        .btn-ai:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4); }
+        .btn-ai:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none;}
     </style>
 </head>
 <body>
@@ -181,7 +186,11 @@
                 <button class="btn-generate" id="previewBtn" style="width: 100%; font-size:1.1rem; padding:15px;" onclick="previewReport()">👁️ تجميع ومعاينة التقرير قبل التنزيل</button>
                 
                 <div id="preview-section" style="display: none; margin-top: 25px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
-                    <h3 style="color: var(--gold); margin-bottom: 15px;">📝 معاينة وتعديل المحتوى (تعديلاتك هنا ستطبع في التقرير):</h3>
+                    <h3 style="color: var(--gold); margin-bottom: 15px;">📝 معاينة وتعديل المحتوى:</h3>
+                    
+                    <button class="btn-ai" id="aiBtn" style="width: 100%; margin-bottom: 20px;" onclick="enhanceAllWithAI()">
+                        ✨ تصحيح وإعادة صياغة الكل بالذكاء الاصطناعي
+                    </button>
                     
                     <label>عنوان واسم الملف:</label>
                     <input type="text" id="customFileName" style="width: 100%; padding: 12px; border-radius: 5px; border: none; margin-bottom: 15px; font-weight:bold; font-size:1.1rem; color: var(--navy-dark);">
@@ -287,8 +296,6 @@
         let currentTab = 'recent';
         let editingReportId = null; 
         let finalPdfUrl = "";
-        
-        // متغيرات حفظ بيانات المعاينة
         let currentReportMeta = {};
 
         function showToast(msg, type='success') {
@@ -298,101 +305,62 @@
             container.appendChild(toast); setTimeout(() => toast.remove(), 3000);
         }
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebarOverlay').classList.toggle('open');
-        }
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('open'); }
 
         function showPage(pageId) {
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active');
             document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active-link'));
             document.getElementById('link-' + pageId).classList.add('active-link');
-            if(window.innerWidth <= 768) { toggleMenu(); }
+            if(window.innerWidth <= 768) toggleMenu();
         }
 
         function switchInboxTab(tab) {
             currentTab = tab;
-            document.getElementById('tab-recent').classList.remove('active');
-            document.getElementById('tab-archive').classList.remove('active');
-            document.getElementById('tab-' + tab).classList.add('active');
-            applyFilters();
+            document.getElementById('tab-recent').classList.remove('active'); document.getElementById('tab-archive').classList.remove('active');
+            document.getElementById('tab-' + tab).classList.add('active'); applyFilters();
         }
 
         async function fetchAchievementsData(silent = false) {
             try {
                 const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getAchievementsList', token: token }) });
                 const result = await response.json();
-                if (result.status === 'success') {
-                    document.getElementById('total-achievements').innerText = result.presidencyAchievements.length;
-                    renderPresidencyAchievements(result.presidencyAchievements);
-                }
+                if (result.status === 'success') { document.getElementById('total-achievements').innerText = result.presidencyAchievements.length; renderPresidencyAchievements(result.presidencyAchievements); }
             } catch (error) { console.error('خطأ في جلب الإنجازات', error); }
         }
 
         function renderPresidencyAchievements(list) {
-            const tbody = document.getElementById('presidency-achievements-body');
-            const fragment = document.createDocumentFragment();
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('presidency-achievements-body'); const fragment = document.createDocumentFragment(); tbody.innerHTML = '';
             if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">لا توجد إنجازات مسجلة</td></tr>'; return; }
-            
             list.forEach(ach => {
                 let tasks = '', movements = '', visits = '', demands = '';
-                try {
-                    let parsed = JSON.parse(ach.desc);
-                    tasks = parsed.tasks || '';
-                    movements = parsed.movements || '';
-                    visits = parsed.visits || '';
-                    demands = parsed.demands || '';
-                } catch(e) {
-                    tasks = ach.title + ":\n" + ach.desc;
-                }
-
+                try { let parsed = JSON.parse(ach.desc); tasks = parsed.tasks || ''; movements = parsed.movements || ''; visits = parsed.visits || ''; demands = parsed.demands || '';
+                } catch(e) { tasks = ach.title + ":\n" + ach.desc; }
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td>${new Date(ach.date).toLocaleDateString('ar-SA')}</td>
-                <td style="white-space: pre-wrap; font-size: 0.9rem;">${tasks}</td>
-                <td style="white-space: pre-wrap; font-size: 0.9rem;">${movements}</td>
-                <td style="white-space: pre-wrap; font-size: 0.9rem;">${visits}</td>
-                <td style="white-space: pre-wrap; font-size: 0.9rem;">${demands}</td>`;
+                <td style="white-space: pre-wrap; font-size: 0.9rem;">${tasks}</td><td style="white-space: pre-wrap; font-size: 0.9rem;">${movements}</td>
+                <td style="white-space: pre-wrap; font-size: 0.9rem;">${visits}</td><td style="white-space: pre-wrap; font-size: 0.9rem;">${demands}</td>`;
                 fragment.appendChild(tr);
             });
             tbody.appendChild(fragment);
         }
 
         async function addPresidencyAchievement() {
-            const tasks = document.getElementById('ach_tasks').value.trim();
-            const movements = document.getElementById('ach_movements').value.trim();
-            const visits = document.getElementById('ach_visits').value.trim();
-            const demands = document.getElementById('ach_demands').value.trim();
-            
-            if(!tasks && !movements && !visits && !demands) { 
-                showToast('يرجى ملء حقل واحد على الأقل', 'error'); return; 
-            }
-            
-            const btn = document.getElementById('btn-add-ach');
-            btn.innerText = 'جاري الحفظ... ⏳'; btn.disabled = true;
-
+            const tasks = document.getElementById('ach_tasks').value.trim(); const movements = document.getElementById('ach_movements').value.trim();
+            const visits = document.getElementById('ach_visits').value.trim(); const demands = document.getElementById('ach_demands').value.trim();
+            if(!tasks && !movements && !visits && !demands) { showToast('يرجى ملء حقل واحد على الأقل', 'error'); return; }
+            const btn = document.getElementById('btn-add-ach'); btn.innerText = 'جاري الحفظ... ⏳'; btn.disabled = true;
             try {
-                const response = await fetch(API_URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify({ action: 'addPresidencyAchievement', token: token, tasks: tasks, movements: movements, visits: visits, demands: demands }) 
-                });
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'addPresidencyAchievement', token: token, tasks: tasks, movements: movements, visits: visits, demands: demands }) });
                 const result = await response.json();
-                if (result.status === 'success') {
-                    document.getElementById('ach_tasks').value = ''; document.getElementById('ach_movements').value = '';
-                    document.getElementById('ach_visits').value = ''; document.getElementById('ach_demands').value = '';
-                    showToast('تم حفظ الإنجاز ودمجه بنجاح!');
-                    fetchAchievementsData(); 
-                } else { showToast(result.message, 'error'); }
-            } catch (error) { showToast('حدث خطأ في الاتصال', 'error'); }
+                if (result.status === 'success') { document.getElementById('ach_tasks').value = ''; document.getElementById('ach_movements').value = ''; document.getElementById('ach_visits').value = ''; document.getElementById('ach_demands').value = ''; showToast('تم الحفظ بنجاح!'); fetchAchievementsData(); } 
+                else { showToast(result.message, 'error'); }
+            } catch (error) { showToast('حدث خطأ', 'error'); }
             btn.innerText = '➕ حفظ الإنجاز واعتماده'; btn.disabled = false;
         }
 
         function updateDefaultDate() {
-            const d = new Date();
-            const iso = d.toISOString().split('T')[0];
-            document.getElementById('startDate').value = iso; 
-            document.getElementById('endDate').value = iso;
+            const d = new Date(); const iso = d.toISOString().split('T')[0]; document.getElementById('startDate').value = iso; document.getElementById('endDate').value = iso;
         }
 
         async function fetchDashboardData(silent = false) {
@@ -403,96 +371,49 @@
                 if (result.status === 'success') {
                     if(!silent) document.getElementById('global-loader').style.display = 'none';
                     allReportsData = result.reports;
-                    
-                    const recentCount = allReportsData.filter(r => r.status !== 'مؤرشف').length;
-                    const archivedCount = allReportsData.filter(r => r.status === 'مؤرشف').length;
-                    
-                    document.getElementById('recent-reports').innerText = recentCount;
-                    document.getElementById('archived-reports').innerText = archivedCount;
-                    
-                    renderTracking(result.departmentsStatus);
-                    applyFilters();
+                    document.getElementById('recent-reports').innerText = allReportsData.filter(r => r.status !== 'مؤرشف').length;
+                    document.getElementById('archived-reports').innerText = allReportsData.filter(r => r.status === 'مؤرشف').length;
+                    renderTracking(result.departmentsStatus); applyFilters();
                 } else { showToast(result.message, 'error'); if(result.message.includes('جلسة')) logout(); }
-            } catch (error) { if(!silent) showToast('خطأ في الاتصال بالخادم.', 'error'); }
+            } catch (error) { if(!silent) showToast('خطأ بالخادم.', 'error'); }
         }
 
         function renderTracking(depts) {
-            const cont = document.getElementById('missing-list');
-            cont.innerHTML = '';
-            let submitted = 0;
-            
+            const cont = document.getElementById('missing-list'); cont.innerHTML = ''; let submitted = 0;
             depts.forEach(d => {
                 if(d.submitted) submitted++;
-                const color = d.submitted ? 'green' : '#E63946'; 
-                const icon = d.submitted ? '✔' : '❌';
+                const color = d.submitted ? 'green' : '#E63946'; const icon = d.submitted ? '✔' : '❌';
                 cont.innerHTML += `<div style="color:${color}; margin-bottom:8px; font-weight:bold;">${icon} ${d.jobTitle}</div>`;
             });
-            
-            document.getElementById('total-depts').innerText = depts.length; 
-            document.getElementById('submitted-count').innerText = submitted;
-            
+            document.getElementById('total-depts').innerText = depts.length; document.getElementById('submitted-count').innerText = submitted;
             const missing = depts.filter(d => !d.submitted).map(d => d.jobTitle);
-            
             if (missing.length > 0) {
                 const msg = `تذكير هام للإدارات التالية: \n${missing.join('، ')} \n\nيرجى سرعة رفع الموقف اليومي.`;
-                cont.innerHTML += `
-                <div style="margin-top: 25px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
-                    <a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" style="background-color: #25D366; color: white; display: inline-block; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%;">
-                        📢 تذكير واتساب للمتأخرين
-                    </a>
-                </div>`;
-            } else { 
-                cont.innerHTML += `
-                <div style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
-                    <p style="color:green; font-weight:bold; margin:0;">✔ تم استلام جميع التقارير.</p>
-                </div>`; 
-            }
+                cont.innerHTML += `<div style="margin-top: 25px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;"><a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" style="background-color: #25D366; color: white; display: inline-block; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%;">📢 تذكير واتساب للمتأخرين</a></div>`;
+            } else { cont.innerHTML += `<div style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;"><p style="color:green; font-weight:bold; margin:0;">✔ تم استلام جميع التقارير.</p></div>`; }
         }
 
         function applyFilters() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const sortVal = document.getElementById('sortSelect').value;
-            
-            let filtered = allReportsData.filter(rep => {
-                const matchesTab = currentTab === 'recent' ? (rep.status !== 'مؤرشف') : (rep.status === 'مؤرشف');
-                const matchesQuery = rep.reportId.toLowerCase().includes(query) || rep.jobTitle.toLowerCase().includes(query);
-                return matchesTab && matchesQuery;
-            });
-
-            filtered.sort((a, b) => {
-                if (sortVal === 'date_desc') return new Date(b.date) - new Date(a.date);
-                if (sortVal === 'date_asc') return new Date(a.date) - new Date(b.date);
-                if (sortVal === 'dept_asc') return a.jobTitle.localeCompare(b.jobTitle, 'ar');
-                return 0;
-            });
-
+            const query = document.getElementById('searchInput').value.toLowerCase(); const sortVal = document.getElementById('sortSelect').value;
+            let filtered = allReportsData.filter(rep => { const matchesTab = currentTab === 'recent' ? (rep.status !== 'مؤرشف') : (rep.status === 'مؤرشف'); const matchesQuery = rep.reportId.toLowerCase().includes(query) || rep.jobTitle.toLowerCase().includes(query); return matchesTab && matchesQuery; });
+            filtered.sort((a, b) => { if (sortVal === 'date_desc') return new Date(b.date) - new Date(a.date); if (sortVal === 'date_asc') return new Date(a.date) - new Date(b.date); if (sortVal === 'dept_asc') return a.jobTitle.localeCompare(b.jobTitle, 'ar'); return 0; });
             renderTable(filtered);
         }
 
         function renderTable(reports) {
-            const tbody = document.getElementById('table-body');
-            const fragment = document.createDocumentFragment();
-            tbody.innerHTML = '';
-            
-            if (reports.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">لا توجد تقارير مطابقة</td></tr>'; return; }
-            
+            const tbody = document.getElementById('table-body'); const fragment = document.createDocumentFragment(); tbody.innerHTML = '';
+            if (reports.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">لا توجد تقارير</td></tr>'; return; }
             reports.slice(0, 100).forEach(rep => {
-                const dObj = new Date(rep.date); 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${rep.reportId}</td><td>${dObj.toLocaleDateString('ar-SA')} ${dObj.toLocaleTimeString('ar-SA')}</td><td>${rep.jobTitle}</td>
-                <td><button class="btn-generate" style="padding: 6px 12px; font-size: 0.9rem;" onclick="openEdit('${rep.reportId}')">✏️ تفاصيل وتعديل</button></td>`;
+                const dObj = new Date(rep.date); const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${rep.reportId}</td><td>${dObj.toLocaleDateString('ar-SA')} ${dObj.toLocaleTimeString('ar-SA')}</td><td>${rep.jobTitle}</td><td><button class="btn-generate" style="padding: 6px 12px; font-size: 0.9rem;" onclick="openEdit('${rep.reportId}')">✏️ تفاصيل وتعديل</button></td>`;
                 fragment.appendChild(tr);
             });
             tbody.appendChild(fragment);
         }
 
         function openEdit(id) {
-            const r = allReportsData.find(x => x.reportId === id);
-            editingReportId = id;
-            document.getElementById('editTitle').innerText = 'تفاصيل تقرير: ' + r.jobTitle;
-            document.getElementById('e_tasks').value = r.tasks; document.getElementById('e_movements').value = r.movements;
-            document.getElementById('e_incidents').value = r.incidents; document.getElementById('e_visits').value = r.visits;
-            document.getElementById('e_demands').value = r.demands; document.getElementById('e_notes').value = r.notes;
+            const r = allReportsData.find(x => x.reportId === id); editingReportId = id; document.getElementById('editTitle').innerText = 'تفاصيل تقرير: ' + r.jobTitle;
+            document.getElementById('e_tasks').value = r.tasks; document.getElementById('e_movements').value = r.movements; document.getElementById('e_incidents').value = r.incidents; document.getElementById('e_visits').value = r.visits; document.getElementById('e_demands').value = r.demands; document.getElementById('e_notes').value = r.notes;
             document.getElementById('editModal').style.display = 'block';
         }
 
@@ -500,113 +421,99 @@
             document.getElementById('saveBtn').innerText = 'جاري الحفظ...';
             const payload = { tasks: document.getElementById('e_tasks').value, movements: document.getElementById('e_movements').value, incidents: document.getElementById('e_incidents').value, visits: document.getElementById('e_visits').value, demands: document.getElementById('e_demands').value, notes: document.getElementById('e_notes').value };
             await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'editReport', token: token, reportId: editingReportId, payload: payload }) });
-            document.getElementById('editModal').style.display = 'none';
-            document.getElementById('saveBtn').innerText = '💾 حفظ التعديلات';
-            showToast('تم تحديث التقرير');
-            fetchDashboardData(true);
+            document.getElementById('editModal').style.display = 'none'; document.getElementById('saveBtn').innerText = '💾 حفظ التعديلات'; showToast('تم تحديث التقرير'); fetchDashboardData(true);
         }
 
-        // --- الدوال الجديدة الخاصة بالمعاينة والاستخراج ---
+        // ====== دوال المعاينة والاستخراج والذكاء الاصطناعي ======
         
         async function previewReport() {
-            const start = document.getElementById('startDate').value; 
-            const end = document.getElementById('endDate').value;
-            const btn = document.getElementById('previewBtn');
-            const previewSection = document.getElementById('preview-section');
-            const linksDiv = document.getElementById('download-links');
-
+            const start = document.getElementById('startDate').value; const end = document.getElementById('endDate').value;
+            const btn = document.getElementById('previewBtn'); const previewSection = document.getElementById('preview-section'); const linksDiv = document.getElementById('download-links');
             if (!start || !end) { showToast('يرجى تحديد تواريخ البداية والنهاية', 'error'); return; }
             
-            btn.innerHTML = 'جاري تجميع البيانات... ⏳'; btn.disabled = true; 
-            previewSection.style.display = 'none'; linksDiv.style.display = 'none';
-
+            btn.innerHTML = 'جاري تجميع البيانات... ⏳'; btn.disabled = true; previewSection.style.display = 'none'; linksDiv.style.display = 'none';
             try {
                 const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'previewConsolidatedReport', token: token, startDate: start, endDate: end }) });
                 const result = await response.json();
-                
                 if (result.status === 'success') {
-                    // تعبئة البيانات في واجهة المعاينة
                     document.getElementById('customFileName').value = result.suggestedTitle;
-                    document.getElementById('p_tasks').value = result.mergedData.tasks;
-                    document.getElementById('p_movements').value = result.mergedData.movements;
-                    document.getElementById('p_incidents').value = result.mergedData.incidents;
-                    document.getElementById('p_visits').value = result.mergedData.visits;
-                    document.getElementById('p_demands').value = result.mergedData.demands;
-                    
-                    // حفظ المتغيرات لإرسالها لاحقاً
+                    document.getElementById('p_tasks').value = result.mergedData.tasks; document.getElementById('p_movements').value = result.mergedData.movements;
+                    document.getElementById('p_incidents').value = result.mergedData.incidents; document.getElementById('p_visits').value = result.mergedData.visits; document.getElementById('p_demands').value = result.mergedData.demands;
                     currentReportMeta = { reportDayName: result.reportDayName, reportDateString: result.reportDateString };
-
-                    previewSection.style.display = 'block';
-                    btn.innerHTML = '👁️ إعادة تجميع ومعاينة التقرير';
-                    showToast('تم تجميع البيانات، يمكنك التعديل عليها الآن أسفل الشاشة');
-                    
-                    // تمرير الشاشة للأسفل لرؤية المعاينة
-                    previewSection.scrollIntoView({ behavior: 'smooth' });
+                    previewSection.style.display = 'block'; btn.innerHTML = '👁️ إعادة تجميع ومعاينة التقرير'; showToast('تم تجميع البيانات'); previewSection.scrollIntoView({ behavior: 'smooth' });
                 } else { showToast(result.message, 'error'); btn.innerHTML = '👁️ تجميع ومعاينة التقرير قبل التنزيل'; }
-            } catch (error) { showToast('حدث خطأ أثناء الاتصال.', 'error'); btn.innerHTML = '👁️ تجميع ومعاينة التقرير قبل التنزيل'; }
+            } catch (error) { showToast('حدث خطأ.', 'error'); btn.innerHTML = '👁️ تجميع ومعاينة التقرير قبل التنزيل'; }
             btn.disabled = false;
         }
 
-        async function generateFinalReport() {
-            const start = document.getElementById('startDate').value; 
-            const end = document.getElementById('endDate').value;
-            const customFileName = document.getElementById('customFileName').value;
-            const btn = document.getElementById('generateBtn'); 
-            const linksDiv = document.getElementById('download-links');
+        // الدالة السحرية لإعادة الصياغة بالذكاء الاصطناعي
+        async function enhanceAllWithAI() {
+            const btn = document.getElementById('aiBtn');
+            btn.innerHTML = 'جاري الصياغة الذكية وتصحيح الأخطاء... يرجى الانتظار ⏳';
+            btn.disabled = true;
+
+            const fieldsToEnhance = ['p_tasks', 'p_movements', 'p_incidents', 'p_visits', 'p_demands'];
+            let hasError = false;
+
+            for (let fieldId of fieldsToEnhance) {
+                const el = document.getElementById(fieldId);
+                if (el.value.trim() !== '' && el.value.trim() !== 'لا يوجد') {
+                    try {
+                        const response = await fetch(API_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({ action: 'enhanceTextWithAI', token: token, text: el.value })
+                        });
+                        const result = await response.json();
+                        if (result.status === 'success') {
+                            el.value = result.enhancedText;
+                        } else {
+                            showToast(result.message, 'error');
+                            hasError = true;
+                        }
+                    } catch (e) {
+                        showToast('خطأ في الاتصال بالذكاء الاصطناعي.', 'error');
+                        hasError = true;
+                    }
+                }
+            }
+
+            if (!hasError) {
+                btn.innerHTML = '✨ اكتملت الصياغة الذكية بنجاح ✔';
+                showToast('تم تصحيح وصياغة جميع الحقول بنجاح!');
+            }
             
+            setTimeout(() => { 
+                btn.innerHTML = '✨ تصحيح وإعادة صياغة الكل بالذكاء الاصطناعي'; 
+                btn.disabled = false; 
+            }, 3500);
+        }
+
+        async function generateFinalReport() {
+            const start = document.getElementById('startDate').value; const end = document.getElementById('endDate').value;
+            const customFileName = document.getElementById('customFileName').value; const btn = document.getElementById('generateBtn'); const linksDiv = document.getElementById('download-links');
             if (!customFileName) { showToast('يرجى كتابة عنوان واسم للملف', 'error'); return; }
-
-            const editedMergedData = {
-                tasks: document.getElementById('p_tasks').value,
-                movements: document.getElementById('p_movements').value,
-                incidents: document.getElementById('p_incidents').value,
-                visits: document.getElementById('p_visits').value,
-                demands: document.getElementById('p_demands').value
-            };
-
+            
+            const editedMergedData = { tasks: document.getElementById('p_tasks').value, movements: document.getElementById('p_movements').value, incidents: document.getElementById('p_incidents').value, visits: document.getElementById('p_visits').value, demands: document.getElementById('p_demands').value };
             btn.innerHTML = 'جاري إنشاء وتجهيز الملفات... ⏳'; btn.disabled = true; linksDiv.style.display = 'none';
             try {
-                const response = await fetch(API_URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify({ 
-                        action: 'generateFinalFiles', token: token, startDate: start, endDate: end, customFileName: customFileName,
-                        mergedData: editedMergedData, reportDayName: currentReportMeta.reportDayName, reportDateString: currentReportMeta.reportDateString
-                    }) 
-                });
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'generateFinalFiles', token: token, startDate: start, endDate: end, customFileName: customFileName, mergedData: editedMergedData, reportDayName: currentReportMeta.reportDayName, reportDateString: currentReportMeta.reportDateString }) });
                 const result = await response.json();
                 if (result.status === 'success') {
-                    document.getElementById('link-pdf').href = result.links.pdf;
-                    document.getElementById('link-word').href = result.links.word; 
-                    document.getElementById('link-excel').href = result.links.excel;
-                    finalPdfUrl = result.links.pdf; 
-                    linksDiv.style.display = 'block'; 
-                    btn.innerHTML = '📥 تأكيد واعتماد لاستخراج الملفات النهائية';
-                    showToast('تم تجهيز الملفات بنجاح ويمكنك تنزيلها');
-                    
-                    linksDiv.scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('link-pdf').href = result.links.pdf; document.getElementById('link-word').href = result.links.word; document.getElementById('link-excel').href = result.links.excel;
+                    finalPdfUrl = result.links.pdf; linksDiv.style.display = 'block'; btn.innerHTML = '📥 تأكيد واعتماد لاستخراج الملفات النهائية'; showToast('تم التجهيز بنجاح'); linksDiv.scrollIntoView({ behavior: 'smooth' });
                 } else { showToast(result.message, 'error'); btn.innerHTML = '📥 تأكيد واعتماد لاستخراج الملفات النهائية'; }
-            } catch (error) { showToast('حدث خطأ أثناء إنشاء التقرير.', 'error'); btn.innerHTML = '📥 تأكيد واعتماد لاستخراج الملفات النهائية'; }
+            } catch (error) { showToast('خطأ أثناء الإنشاء.', 'error'); btn.innerHTML = '📥 تأكيد واعتماد لاستخراج الملفات النهائية'; }
             btn.disabled = false;
         }
 
         async function shareToApp() {
-            const fileName = document.getElementById('customFileName').value;
-            const shareText = "مرفق الموقف المجمع:\n";
-            if (navigator.share) { 
-                try {
-                    await navigator.share({ title: fileName, text: shareText, url: finalPdfUrl });
-                } catch(err) { console.error('Share aborted', err); }
-            } 
+            const fileName = document.getElementById('customFileName').value; const shareText = "مرفق الموقف المجمع:\n";
+            if (navigator.share) { try { await navigator.share({ title: fileName, text: shareText, url: finalPdfUrl }); } catch(err) { console.error('Share aborted', err); } } 
             else { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + finalPdfUrl)}`); }
         }
 
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
-        
-        window.onload = function() {
-            fetchDashboardData();
-            fetchAchievementsData();
-            setInterval(() => { fetchDashboardData(true); fetchAchievementsData(true); }, 60000);
-        };
+        window.onload = function() { fetchDashboardData(); fetchAchievementsData(); setInterval(() => { fetchDashboardData(true); fetchAchievementsData(true); }, 60000); };
     </script>
 </body>
 </html>
