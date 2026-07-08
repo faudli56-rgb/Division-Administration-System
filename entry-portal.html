@@ -36,6 +36,11 @@
         .btn-outline { background-color: transparent; color: var(--navy-dark); border: 2px dashed var(--navy-dark); padding: 10px; border-radius: 6px; width: 100%; cursor: pointer; font-family: var(--font-body); font-weight: 600; margin-bottom: 10px; transition: 0.3s; }
         .btn-outline:hover { background-color: var(--navy-light); color: var(--white); border-color: var(--navy-light); }
 
+        /* تأثيرات زر الذكاء الاصطناعي */
+        .btn-ai { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3); }
+        .btn-ai:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4); }
+        .btn-ai:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none;}
+
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(10, 25, 47, 0.8); backdrop-filter: blur(3px); overflow-y: auto; }
         .modal-content { background-color: var(--white); margin: 20px auto; padding: 20px; border-radius: 8px; width: 95%; max-width: 600px; border-top: 4px solid var(--gold); position: relative; animation: slideDown 0.3s ease-out; }
         @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -60,7 +65,7 @@
 <body>
 
     <div id="time-alert">
-        ⏰ تنبيه هام: لقد تجاوزنا الساعة 4:00 مساءً. الرجاء سرعة تجهيز ورفع الموقف اليومي!
+        ⏰ تنبيه هام: تأخر الوقت! الرجاء سرعة تجهيز ورفع الموقف اليومي.
     </div>
 
     <header>
@@ -81,10 +86,13 @@
 
     <div class="container" id="form-container">
         
+        <!-- قسم إضافة إنجاز الإدارة -->
         <div class="card" style="border-top-color: var(--success);">
             <h3>⭐ إضافة إنجاز للإدارة</h3>
             <div class="form-group"><label>عنوان الإنجاز</label><input type="text" id="ach_title" class="form-control" placeholder="أدخل عنوان الإنجاز..."></div>
             <div class="form-group"><label>تفاصيل الإنجاز</label><textarea id="ach_desc" class="form-control" placeholder="اكتب تفاصيل الإنجاز..."></textarea></div>
+            
+            <button type="button" class="btn-ai" id="aiAchBtn" onclick="enhanceAchievementWithAI()" style="width: 100%; margin-bottom: 15px; padding: 12px; font-size: 1rem;">✨ صياغة وتصحيح الإنجاز بالذكاء الاصطناعي</button>
             <button class="btn-outline" style="border-color: var(--success); color: var(--success);" id="ach_btn" onclick="submitAchievement()">رفع الإنجاز للقيادة</button>
         </div>
 
@@ -123,10 +131,14 @@
                 <button type="button" class="btn-outline" onclick="openModal('materialModal')">➕ إضافة خسارة مادية</button>
             </div>
 
+            <!-- زر الذكاء الاصطناعي الشامل للتقرير -->
+            <button type="button" class="btn-ai" id="aiReportBtn" onclick="enhanceReportWithAI()" style="width: 100%; margin-bottom: 15px;">✨ صياغة وتصحيح التقرير بالذكاء الاصطناعي</button>
+            
             <button type="submit" class="btn-gold" id="submitBtn">📤 إرسال التقرير النهائي</button>
         </form>
     </div>
 
+    <!-- النوافذ المنبثقة للخسائر -->
     <div id="humanModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h3 style="font-family: var(--font-heading); color: var(--navy-dark);">إضافة خسارة بشرية</h3><button class="close-btn" onclick="closeModal('humanModal')">×</button></div>
@@ -195,13 +207,14 @@
         document.getElementById('display-job').innerText = userData.jobTitle;
         document.getElementById('live-date').innerText = new Date().toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
         
-      let isSubmitted = false;
+        let isSubmitted = false;
         function checkTimeForReminder() {
             if (new Date().getHours() >= 16 && !isSubmitted) {
                 document.getElementById('time-alert').style.display = 'block';
             }
         }
         setInterval(checkTimeForReminder, 60000); checkTimeForReminder();
+        
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
         
         function showToast(msg, type='success') {
@@ -234,6 +247,65 @@
         function deleteHumanLoss(index) { humanLossesArray.splice(index, 1); renderLosses(); }
         function deleteMaterialLoss(index) { materialLossesArray.splice(index, 1); renderLosses(); }
 
+        // ====== دوال الذكاء الاصطناعي ======
+        
+        async function enhanceReportWithAI() {
+            const btn = document.getElementById('aiReportBtn');
+            btn.innerHTML = 'جاري الصياغة الذكية... ⏳';
+            btn.disabled = true;
+
+            const fieldsToEnhance = ['tasks', 'movements', 'incidents', 'visits', 'demands', 'notes'];
+            let hasError = false;
+
+            for (let fieldId of fieldsToEnhance) {
+                const el = document.getElementById(fieldId);
+                if (el && el.value.trim() !== '') {
+                    try {
+                        const response = await fetch(API_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({ action: 'enhanceTextWithAI', token: token, text: el.value })
+                        });
+                        const result = await response.json();
+                        if (result.status === 'success') {
+                            el.value = result.enhancedText;
+                        } else {
+                            showToast(result.message, 'error');
+                            hasError = true;
+                        }
+                    } catch (e) {
+                        showToast('خطأ في الاتصال بالذكاء الاصطناعي.', 'error');
+                        hasError = true;
+                    }
+                }
+            }
+
+            if (!hasError) {
+                btn.innerHTML = '✨ اكتملت الصياغة بنجاح ✔';
+                showToast('تم تصحيح التقرير بنجاح!');
+            }
+            setTimeout(() => { btn.innerHTML = '✨ صياغة وتصحيح التقرير بالذكاء الاصطناعي'; btn.disabled = false; }, 3500);
+        }
+
+        async function enhanceAchievementWithAI() {
+            const btn = document.getElementById('aiAchBtn');
+            const el = document.getElementById('ach_desc');
+            if(el.value.trim() === '') { showToast('يرجى كتابة تفاصيل الإنجاز أولاً', 'error'); return; }
+            
+            btn.innerHTML = 'جاري الصياغة... ⏳'; btn.disabled = true;
+            try {
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'enhanceTextWithAI', token: token, text: el.value }) });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    el.value = result.enhancedText;
+                    btn.innerHTML = '✨ اكتملت الصياغة ✔';
+                    showToast('تم تصحيح الإنجاز بنجاح!');
+                } else { showToast(result.message, 'error'); btn.innerHTML = '✨ صياغة وتصحيح الإنجاز بالذكاء الاصطناعي'; }
+            } catch (e) { showToast('خطأ بالاتصال.', 'error'); btn.innerHTML = '✨ صياغة وتصحيح الإنجاز بالذكاء الاصطناعي'; }
+            setTimeout(() => { btn.innerHTML = '✨ صياغة وتصحيح الإنجاز بالذكاء الاصطناعي'; btn.disabled = false; }, 3000);
+        }
+
+        // ====== دوال الإرسال ======
+
         document.getElementById('reportForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn'); btn.innerHTML = 'جاري التشفير والإرسال... ⏳'; btn.disabled = true;
@@ -246,16 +318,18 @@
                 humanLosses: humanLossesArray, materialLosses: materialLossesArray
             };
             
-            // تشفير البيانات
             const encryptedPayload = btoa(unescape(encodeURIComponent(JSON.stringify(rawPayload))));
 
             try {
                 const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'submitReport', token: token, payload: encryptedPayload }) });
                 const result = await response.json();
-                if (result.status === 'success') { document.getElementById('form-container').style.display = 'none'; 
-document.getElementById('success-screen').style.display = 'block'; 
-document.getElementById('time-alert').style.display = 'none'; 
-window.scrollTo(0, 0); } 
+                if (result.status === 'success') { 
+                    isSubmitted = true;
+                    document.getElementById('time-alert').style.display = 'none';
+                    document.getElementById('form-container').style.display = 'none'; 
+                    document.getElementById('success-screen').style.display = 'block'; 
+                    window.scrollTo(0, 0); 
+                } 
                 else { showToast(result.message, 'error'); btn.innerHTML = '📤 إرسال التقرير النهائي'; btn.disabled = false; if(result.message.includes('جلسة')) setTimeout(logout, 2000); }
             } catch (error) { showToast('حدث خطأ في الاتصال.', 'error'); btn.innerHTML = '📤 إرسال التقرير النهائي'; btn.disabled = false; }
         });
@@ -281,6 +355,8 @@ window.scrollTo(0, 0); }
                 if (result.status === 'success') {
                     showToast('تم رفع الإنجاز واعتماده بنجاح!');
                     document.getElementById('ach_title').value = ''; document.getElementById('ach_desc').value = '';
+                    isSubmitted = true;
+                    document.getElementById('time-alert').style.display = 'none';
                 } else { showToast('خطأ: ' + result.message, 'error'); }
             } catch (error) { showToast('حدث خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً.', 'error'); }
             
