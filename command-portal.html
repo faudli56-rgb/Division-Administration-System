@@ -195,11 +195,11 @@
                     <label>عنوان واسم الملف:</label>
                     <input type="text" id="customFileName" style="width: 100%; padding: 12px; border-radius: 5px; border: none; margin-bottom: 15px; font-weight:bold; font-size:1.1rem; color: var(--navy-dark);">
                     
-                    <label>المهام المنفذة:</label>
-                    <textarea id="p_tasks" style="width: 100%; min-height: 150px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
+                   <label>المهام المنفذة:</label>
+                    <textarea id="p_tasks" onblur="autoRenumber(this)" style="width: 100%; min-height: 150px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
 
-                    <label>التحركات:</label>
-                    <textarea id="p_movements" style="width: 100%; min-height: 100px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
+                   <label>التحركات:</label>
+                    <textarea id="p_movements" onblur="autoRenumber(this)" style="width: 100%; min-height: 100px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
 
                     <label>الحوادث:</label>
                     <textarea id="p_incidents" style="width: 100%; min-height: 80px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
@@ -207,8 +207,8 @@
                     <label>الزيارات:</label>
                     <textarea id="p_visits" style="width: 100%; min-height: 80px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
 
-                    <label>المطالب:</label>
-                    <textarea id="p_demands" style="width: 100%; min-height: 80px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
+                   <label>المطالب:</label>
+                    <textarea id="p_demands" onblur="autoRenumber(this)" style="width: 100%; min-height: 80px; padding: 10px; border-radius: 5px; border: none; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.6;"></textarea>
                     
                     <button class="btn-generate" id="generateBtn" style="width: 100%; font-size:1.1rem; padding:15px; background-color: var(--success); color: white;" onclick="generateFinalReport()">📥 تأكيد واعتماد لاستخراج الملفات النهائية</button>
                 </div>
