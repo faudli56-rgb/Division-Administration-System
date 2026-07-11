@@ -514,6 +514,21 @@
 
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
         window.onload = function() { fetchDashboardData(); fetchAchievementsData(); setInterval(() => { fetchDashboardData(true); fetchAchievementsData(true); }, 60000); };
+        // دالة إعادة الترقيم التلقائي
+        function autoRenumber(textarea) {
+            if (!textarea.value || textarea.value.trim() === '' || textarea.value.trim() === 'لا يوجد') return;
+            let lines = textarea.value.split('\n');
+            let cleanLines = [];
+            lines.forEach(line => {
+                let cleaned = line.trim().replace(/^([\d\u0660-\u0669]+[\-\.\)]|[\-\*])\s*/, '');
+                if (cleaned) cleanLines.push(cleaned);
+            });
+            let newText = "";
+            for (let i = 0; i < cleanLines.length; i++) {
+                newText += (i + 1) + "- " + cleanLines[i] + "\n";
+            }
+            textarea.value = newText.trim();
+        }
     </script>
 </body>
 </html>
