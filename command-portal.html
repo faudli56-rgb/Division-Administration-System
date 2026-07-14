@@ -301,30 +301,33 @@
         let currentReportMeta = {};
 // دوال التشفير وفك التشفير
 function encryptAES(text, key) { 
-    return text ? CryptoJS.AES.encrypt(text, key).toString() : ''; 
+    return text ? CryptoJS.AES.encrypt(text.trim(), key.trim()).toString() : ''; 
 }
 
 function decryptAES(ciphertext, key) {
     if (!ciphertext) return "";
+    // إذا كان التقرير قديماً وغير مشفر، سيتم عرضه كما هو دون طلاسم
+    if (!ciphertext.startsWith("U2Fsd")) return ciphertext;
+
     try {
-        const bytes = CryptoJS.AES.decrypt(ciphertext, key);
+        const bytes = CryptoJS.AES.decrypt(ciphertext, key.trim());
         const originalText = bytes.toString(CryptoJS.enc.Utf8);
-        return originalText || ciphertext; 
+        // إذا نجح فك التشفير نعرض النص
+        if (originalText) return originalText;
+        // إذا فشل (مفتاح خاطئ) نعرض رسالة واضحة بدلاً من الطلاسم
+        return "🔒 [محتوى مشفر - مفتاح خاطئ]";
     } catch (e) { 
-        return ciphertext; 
+        return "🔒 [محتوى مشفر - مفتاح خاطئ]"; 
     }
 }
-
 function getAdminKey() {
     let key = sessionStorage.getItem('adminSecretKey');
     if (!key) {
-        key = prompt("🔒 أمان عالي: لا يمكن عرض الموقف اليومي بدون المفتاح السري. الرجاء الإدخال:");
+        key = prompt("🔒 النظام مشفر: الرجاء إدخال المفتاح السري لفك تشفير التقارير:");
         if (key) {
-            sessionStorage.setItem('adminSecretKey', key);
+            sessionStorage.setItem('adminSecretKey', key.trim());
         } else {
-            // تدمير الواجهة بالكامل وطرد المستخدم إذا ضغط إلغاء
-            document.body.innerHTML = '<div style="background:#0A192F; height:100vh; display:flex; justify-content:center; align-items:center; flex-direction:column;"><h1 style="color:#E63946; margin-bottom:20px;">🔒 النظام مقفل!</h1><h3 style="color:white;">لا يمكنك الوصول للوحة القيادة بدون المفتاح السري.</h3><br><button onclick="location.reload()" style="padding:15px 30px; font-size:1.2rem; cursor:pointer; background:#D4AF37; border:none; border-radius:8px;">تحديث للمحاولة مجدداً</button></div>';
-            throw new Error("لم يتم إدخال المفتاح");
+            return "NO_KEY";
         }
     }
     return key;
@@ -405,29 +408,6 @@ function getAdminKey() {
             
             const adminKey = getAdminKey();
 
-            // === 🚨 نظام التحقق الذكي والطرد الفوري 🚨 ===
-            let isKeyCorrect = true;
-            if (result.reports.length > 0) {
-                for (let rep of result.reports) {
-                    let testField = rep.tasks || rep.movements || rep.incidents || rep.demands || "";
-                    if (testField && testField.length > 10) { 
-                        let decrypted = decryptAES(testField, adminKey);
-                        if (decrypted === testField) { 
-                            isKeyCorrect = false; // المفتاح خاطئ
-                        }
-                        break; 
-                    }
-                }
-            }
-
-            if (!isKeyCorrect) {
-                sessionStorage.removeItem('adminSecretKey');
-                // طمس الشاشة بالكامل باللون الأحمر وطرد المخترق
-                document.body.innerHTML = '<div style="background:#0A192F; height:100vh; display:flex; justify-content:center; align-items:center; flex-direction:column;"><h1 style="color:#E63946; margin-bottom:20px; font-size: 3rem;">🚫 تم رصد مفتاح تشفير خاطئ!</h1><h2 style="color:white;">تم إقفال النظام وحجب الواجهة بالكامل لحماية الموقف العسكري.</h2><br><button onclick="location.reload()" style="padding:15px 30px; font-size:1.2rem; cursor:pointer; background:#D4AF37; border:none; border-radius:8px;">إعادة المحاولة</button></div>';
-                return; // إيقاف العمليات فوراً
-            }
-            // ===============================================
-
             allReportsData = result.reports.map(rep => ({
                 ...rep,
                 tasks: decryptAES(rep.tasks, adminKey),
@@ -442,14 +422,21 @@ function getAdminKey() {
             document.getElementById('archived-reports').innerText = allReportsData.filter(r => r.status === 'مؤرشف').length;
             renderTracking(result.departmentsStatus); 
             applyFilters();
+
+            // إضافة زر (تغيير المفتاح) في الأعلى لتسهيل العمل
+            if (!document.getElementById('resetKeyBtn')) {
+                const headerRight = document.querySelector('.header-right');
+                if (headerRight) {
+                    headerRight.innerHTML += `<button id="resetKeyBtn" onclick="resetAdminKey()" style="background:#E63946; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer; font-family:inherit; font-weight:bold; margin-right:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔑 تغيير المفتاح</button>`;
+                }
+            }
+
         } else { 
             showToast(result.message, 'error'); 
             if(result.message.includes('جلسة')) logout(); 
         }
     } catch (error) { 
-        if (error.message !== "لم يتم إدخال المفتاح" && !silent) {
-            showToast('خطأ بالخادم.', 'error'); 
-        }
+        if(!silent) showToast('خطأ بالخادم.', 'error'); 
     }
 }
         function renderTracking(depts) {
