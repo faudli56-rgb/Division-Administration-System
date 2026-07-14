@@ -320,13 +320,13 @@
         showToast("تم إلغاء الإرسال: يجب إدخال مفتاح التشفير", "error");
         return;
     }
-
+const finalKey = secretKey.trim();
     const btn = document.getElementById('submitBtn'); 
     btn.innerHTML = 'جاري التشفير العميق والإرسال... ⏳'; 
     btn.disabled = true;
 
     try {
-        const encryptAES = (text) => text ? CryptoJS.AES.encrypt(text, secretKey).toString() : '';
+        const encryptAES = (text) => text ? CryptoJS.AES.encrypt(text, finalKey).toString() : '';
         const encryptArray = (arr) => arr.map(item => {
             let encryptedItem = {};
             for (let key in item) { encryptedItem[key] = encryptAES(item[key]); }
