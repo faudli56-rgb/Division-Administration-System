@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -299,7 +300,30 @@
         let editingReportId = null; 
         let finalPdfUrl = "";
         let currentReportMeta = {};
+// دوال التشفير وفك التشفير
+function encryptAES(text, key) { 
+    return text ? CryptoJS.AES.encrypt(text, key).toString() : ''; 
+}
 
+function decryptAES(ciphertext, key) {
+    if (!ciphertext) return "";
+    try {
+        const bytes = CryptoJS.AES.decrypt(ciphertext, key);
+        const originalText = bytes.toString(CryptoJS.enc.Utf8);
+        return originalText || ciphertext; 
+    } catch (e) { 
+        return ciphertext; 
+    }
+}
+
+function getAdminKey() {
+    let key = sessionStorage.getItem('adminSecretKey');
+    if (!key) {
+        key = prompt("🔒 النظام مشفر: أدخل مفتاح التشفير السري لفك تشفير التقارير:");
+        if(key) sessionStorage.setItem('adminSecretKey', key);
+    }
+    return key || "no-key";
+}
         function showToast(msg, type='success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div'); toast.className = `toast`;
@@ -365,21 +389,39 @@
             const d = new Date(); const iso = d.toISOString().split('T')[0]; document.getElementById('startDate').value = iso; document.getElementById('endDate').value = iso;
         }
 
-        async function fetchDashboardData(silent = false) {
-            if(!silent) updateDefaultDate();
-            try {
-                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getDashboardData', token: token }) });
-                const result = await response.json();
-                if (result.status === 'success') {
-                    if(!silent) document.getElementById('global-loader').style.display = 'none';
-                    allReportsData = result.reports;
-                    document.getElementById('recent-reports').innerText = allReportsData.filter(r => r.status !== 'مؤرشف').length;
-                    document.getElementById('archived-reports').innerText = allReportsData.filter(r => r.status === 'مؤرشف').length;
-                    renderTracking(result.departmentsStatus); applyFilters();
-                } else { showToast(result.message, 'error'); if(result.message.includes('جلسة')) logout(); }
-            } catch (error) { if(!silent) showToast('خطأ بالخادم.', 'error'); }
-        }
+       async function fetchDashboardData(silent = false) {
+    if(!silent) updateDefaultDate();
+    try {
+        const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getDashboardData', token: token }) });
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            if(!silent) document.getElementById('global-loader').style.display = 'none';
+            
+            // فك التشفير هنا
+            const adminKey = getAdminKey();
+            allReportsData = result.reports.map(rep => ({
+                ...rep,
+                tasks: decryptAES(rep.tasks, adminKey),
+                movements: decryptAES(rep.movements, adminKey),
+                incidents: decryptAES(rep.incidents, adminKey),
+                visits: decryptAES(rep.visits, adminKey),
+                demands: decryptAES(rep.demands, adminKey),
+                notes: decryptAES(rep.notes, adminKey)
+            }));
 
+            document.getElementById('recent-reports').innerText = allReportsData.filter(r => r.status !== 'مؤرشف').length;
+            document.getElementById('archived-reports').innerText = allReportsData.filter(r => r.status === 'مؤرشف').length;
+            renderTracking(result.departmentsStatus); 
+            applyFilters();
+        } else { 
+            showToast(result.message, 'error'); 
+            if(result.message.includes('جلسة')) logout(); 
+        }
+    } catch (error) { 
+        if(!silent) showToast('خطأ بالخادم.', 'error'); 
+    }
+}
         function renderTracking(depts) {
             const cont = document.getElementById('missing-list'); cont.innerHTML = ''; let submitted = 0;
             depts.forEach(d => {
@@ -420,12 +462,24 @@
         }
 
         async function saveEdit() {
-            document.getElementById('saveBtn').innerText = 'جاري الحفظ...';
-            const payload = { tasks: document.getElementById('e_tasks').value, movements: document.getElementById('e_movements').value, incidents: document.getElementById('e_incidents').value, visits: document.getElementById('e_visits').value, demands: document.getElementById('e_demands').value, notes: document.getElementById('e_notes').value };
-            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'editReport', token: token, reportId: editingReportId, payload: payload }) });
-            document.getElementById('editModal').style.display = 'none'; document.getElementById('saveBtn').innerText = '💾 حفظ التعديلات'; showToast('تم تحديث التقرير'); fetchDashboardData(true);
-        }
+    document.getElementById('saveBtn').innerText = 'جاري الحفظ...';
+    const adminKey = getAdminKey();
+    const payload = { 
+        tasks: encryptAES(document.getElementById('e_tasks').value, adminKey), 
+        movements: encryptAES(document.getElementById('e_movements').value, adminKey), 
+        incidents: encryptAES(document.getElementById('e_incidents').value, adminKey), 
+        visits: encryptAES(document.getElementById('e_visits').value, adminKey), 
+        demands: encryptAES(document.getElementById('e_demands').value, adminKey), 
+        notes: encryptAES(document.getElementById('e_notes').value, adminKey) 
+    };
 
+    await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'editReport', token: token, reportId: editingReportId, payload: payload }) });
+    
+    document.getElementById('editModal').style.display = 'none';
+    document.getElementById('saveBtn').innerText = '💾 حفظ التعديلات'; 
+    showToast('تم تحديث التقرير'); 
+    fetchDashboardData(true);
+}
         // ====== دوال المعاينة والاستخراج والذكاء الاصطناعي ======
         
         async function previewReport() {
