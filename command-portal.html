@@ -393,7 +393,7 @@ function getAdminKey() {
             const d = new Date(); const iso = d.toISOString().split('T')[0]; document.getElementById('startDate').value = iso; document.getElementById('endDate').value = iso;
         }
 
-       async function fetchDashboardData(silent = false) {
+      async function fetchDashboardData(silent = false) {
     if(!silent) updateDefaultDate();
     try {
         const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getDashboardData', token: token }) });
@@ -402,8 +402,39 @@ function getAdminKey() {
         if (result.status === 'success') {
             if(!silent) document.getElementById('global-loader').style.display = 'none';
             
-            // فك التشفير هنا
             const adminKey = getAdminKey();
+
+            // === 🚨 نظام التحقق الذكي من صحة المفتاح 🚨 ===
+            let isKeyCorrect = true;
+            if (result.reports.length > 0) {
+                for (let rep of result.reports) {
+                    // نختار حقلاً مشفراً لاختبار المفتاح عليه
+                    let testField = rep.tasks || rep.movements || rep.incidents || rep.demands || "";
+                    if (testField) {
+                        let decrypted = decryptAES(testField, adminKey);
+                        // إذا لم يتغير النص، فهذا يعني أن فك التشفير فشل (المفتاح خطأ)
+                        if (decrypted === testField) { 
+                            isKeyCorrect = false;
+                        }
+                        break; 
+                    }
+                }
+            }
+
+            // إذا تم اكتشاف أن المفتاح خاطئ: إغلاق وعرض رسالة تحذير
+            if (!isKeyCorrect) {
+                sessionStorage.removeItem('adminSecretKey'); // حذف المفتاح الخاطئ من الذاكرة
+                showToast("❌ مفتاح التشفير العسكري غير صحيح! تم رفض الوصول للبيانات.", "error");
+                
+                // تصفير الإحصائيات وقفل الجدول
+                document.getElementById('recent-reports').innerText = '0';
+                document.getElementById('archived-reports').innerText = '0';
+                document.getElementById('table-body').innerHTML = '<tr><td colspan="4" style="text-align: center; color: #E63946; font-weight: bold; padding: 40px; font-size: 1.2rem;">🔒 تم قفل البيانات بسبب إدخال مفتاح تشفير خاطئ.<br><br>يرجى تحديث الصفحة (F5) والمحاولة مجدداً باستخدام المفتاح الصحيح.</td></tr>';
+                return; // إيقاف إكمال الكود نهائياً
+            }
+            // ===============================================
+
+            // إذا كان المفتاح صحيحاً، استمر بفك التشفير وعرض البيانات
             allReportsData = result.reports.map(rep => ({
                 ...rep,
                 tasks: decryptAES(rep.tasks, adminKey),
