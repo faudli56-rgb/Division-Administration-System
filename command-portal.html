@@ -494,23 +494,63 @@ function getAdminKey() {
 }
         // ====== دوال المعاينة والاستخراج والذكاء الاصطناعي ======
         
-        async function previewReport() {
-            const start = document.getElementById('startDate').value; const end = document.getElementById('endDate').value;
-            const btn = document.getElementById('previewBtn'); const previewSection = document.getElementById('preview-section'); const linksDiv = document.getElementById('download-links');
+       async function previewReport() {
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            const btn = document.getElementById('previewBtn'); 
+            const previewSection = document.getElementById('preview-section'); 
+            const linksDiv = document.getElementById('download-links');
+
             if (!start || !end) { showToast('يرجى تحديد تواريخ البداية والنهاية', 'error'); return; }
-            
-            btn.innerHTML = 'جاري تجميع البيانات... ⏳'; btn.disabled = true; previewSection.style.display = 'none'; linksDiv.style.display = 'none';
+                        
+            btn.innerHTML = 'جاري التجميع وفك التشفير العميق... ⏳';
+            btn.disabled = true; 
+            previewSection.style.display = 'none'; 
+            linksDiv.style.display = 'none';
+
             try {
                 const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'previewConsolidatedReport', token: token, startDate: start, endDate: end }) });
                 const result = await response.json();
+                
                 if (result.status === 'success') {
+                    const adminKey = getAdminKey(); // استدعاء المفتاح السري لفك التشفير
+
+                    // دالة ذكية لفك تشفير الأسطر المجمعة القادمة من الخادم سطراً بسطر
+                    const decryptExportField = (text) => {
+                        if (!text) return "";
+                        return text.split('\n').map(line => {
+                            // استخراج الترقيم إذا كان موجوداً (مثل: "1- ")
+                            let match = line.match(/^(\d+-\s*)(.*)/);
+                            if (match) {
+                                return match[1] + decryptAES(match[2].trim(), adminKey);
+                            }
+                            // فك التشفير للأسطر العادية
+                            return decryptAES(line.trim(), adminKey);
+                        }).filter(line => line.trim() !== "").join('\n\n'); // مسافة بين التقارير لترتيب أفضل
+                    };
+
                     document.getElementById('customFileName').value = result.suggestedTitle;
-                    document.getElementById('p_tasks').value = result.mergedData.tasks; document.getElementById('p_movements').value = result.mergedData.movements;
-                    document.getElementById('p_incidents').value = result.mergedData.incidents; document.getElementById('p_visits').value = result.mergedData.visits; document.getElementById('p_demands').value = result.mergedData.demands;
+                    
+                    // تطبيق فك التشفير هنا قبل عرضها في مربعات التعديل
+                    document.getElementById('p_tasks').value = decryptExportField(result.mergedData.tasks); 
+                    document.getElementById('p_movements').value = decryptExportField(result.mergedData.movements);
+                    document.getElementById('p_incidents').value = decryptExportField(result.mergedData.incidents); 
+                    document.getElementById('p_visits').value = decryptExportField(result.mergedData.visits); 
+                    document.getElementById('p_demands').value = decryptExportField(result.mergedData.demands);
+                    
                     currentReportMeta = { reportDayName: result.reportDayName, reportDateString: result.reportDateString };
-                    previewSection.style.display = 'block'; btn.innerHTML = '👁️ إعادة تجميع ومعاينة التقرير'; showToast('تم تجميع البيانات'); previewSection.scrollIntoView({ behavior: 'smooth' });
-                } else { showToast(result.message, 'error'); btn.innerHTML = '👁️ تجميع ومعاينة التقرير قبل التنزيل'; }
-            } catch (error) { showToast('حدث خطأ.', 'error'); btn.innerHTML = '👁️ تجميع ومعاينة التقرير قبل التنزيل'; }
+                    previewSection.style.display = 'block'; 
+                    btn.innerHTML = '👁️ إعادة تجميع ومعاينة التقرير';
+                    showToast('تم التجميع وفك التشفير بنجاح'); 
+                    previewSection.scrollIntoView({ behavior: 'smooth' });
+                } else { 
+                    showToast(result.message, 'error'); 
+                    btn.innerHTML = '👁️ تجميع ومعاينة التقرير قبل التنزيل';
+                }
+            } catch (error) { 
+                showToast('حدث خطأ أثناء التجميع.', 'error');
+                btn.innerHTML = '👁️ تجميع ومعاينة التقرير قبل التنزيل'; 
+            }
             btn.disabled = false;
         }
 
