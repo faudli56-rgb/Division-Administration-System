@@ -322,8 +322,9 @@ function getAdminKey() {
         if (key) {
             sessionStorage.setItem('adminSecretKey', key);
         } else {
-            showToast("⚠️ تم إيقاف عرض التقارير. المفتاح مطلوب!", "error");
-            throw new Error("لم يتم تقديم مفتاح التشفير"); // هذا السطر يوقف تحميل النظام تماماً
+            // تدمير الواجهة بالكامل وطرد المستخدم إذا ضغط إلغاء
+            document.body.innerHTML = '<div style="background:#0A192F; height:100vh; display:flex; justify-content:center; align-items:center; flex-direction:column;"><h1 style="color:#E63946; margin-bottom:20px;">🔒 النظام مقفل!</h1><h3 style="color:white;">لا يمكنك الوصول للوحة القيادة بدون المفتاح السري.</h3><br><button onclick="location.reload()" style="padding:15px 30px; font-size:1.2rem; cursor:pointer; background:#D4AF37; border:none; border-radius:8px;">تحديث للمحاولة مجدداً</button></div>';
+            throw new Error("لم يتم إدخال المفتاح");
         }
     }
     return key;
@@ -393,7 +394,7 @@ function getAdminKey() {
             const d = new Date(); const iso = d.toISOString().split('T')[0]; document.getElementById('startDate').value = iso; document.getElementById('endDate').value = iso;
         }
 
-      async function fetchDashboardData(silent = false) {
+    async function fetchDashboardData(silent = false) {
     if(!silent) updateDefaultDate();
     try {
         const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getDashboardData', token: token }) });
@@ -404,37 +405,29 @@ function getAdminKey() {
             
             const adminKey = getAdminKey();
 
-            // === 🚨 نظام التحقق الذكي من صحة المفتاح 🚨 ===
+            // === 🚨 نظام التحقق الذكي والطرد الفوري 🚨 ===
             let isKeyCorrect = true;
             if (result.reports.length > 0) {
                 for (let rep of result.reports) {
-                    // نختار حقلاً مشفراً لاختبار المفتاح عليه
                     let testField = rep.tasks || rep.movements || rep.incidents || rep.demands || "";
-                    if (testField) {
+                    if (testField && testField.length > 10) { 
                         let decrypted = decryptAES(testField, adminKey);
-                        // إذا لم يتغير النص، فهذا يعني أن فك التشفير فشل (المفتاح خطأ)
                         if (decrypted === testField) { 
-                            isKeyCorrect = false;
+                            isKeyCorrect = false; // المفتاح خاطئ
                         }
                         break; 
                     }
                 }
             }
 
-            // إذا تم اكتشاف أن المفتاح خاطئ: إغلاق وعرض رسالة تحذير
             if (!isKeyCorrect) {
-                sessionStorage.removeItem('adminSecretKey'); // حذف المفتاح الخاطئ من الذاكرة
-                showToast("❌ مفتاح التشفير العسكري غير صحيح! تم رفض الوصول للبيانات.", "error");
-                
-                // تصفير الإحصائيات وقفل الجدول
-                document.getElementById('recent-reports').innerText = '0';
-                document.getElementById('archived-reports').innerText = '0';
-                document.getElementById('table-body').innerHTML = '<tr><td colspan="4" style="text-align: center; color: #E63946; font-weight: bold; padding: 40px; font-size: 1.2rem;">🔒 تم قفل البيانات بسبب إدخال مفتاح تشفير خاطئ.<br><br>يرجى تحديث الصفحة (F5) والمحاولة مجدداً باستخدام المفتاح الصحيح.</td></tr>';
-                return; // إيقاف إكمال الكود نهائياً
+                sessionStorage.removeItem('adminSecretKey');
+                // طمس الشاشة بالكامل باللون الأحمر وطرد المخترق
+                document.body.innerHTML = '<div style="background:#0A192F; height:100vh; display:flex; justify-content:center; align-items:center; flex-direction:column;"><h1 style="color:#E63946; margin-bottom:20px; font-size: 3rem;">🚫 تم رصد مفتاح تشفير خاطئ!</h1><h2 style="color:white;">تم إقفال النظام وحجب الواجهة بالكامل لحماية الموقف العسكري.</h2><br><button onclick="location.reload()" style="padding:15px 30px; font-size:1.2rem; cursor:pointer; background:#D4AF37; border:none; border-radius:8px;">إعادة المحاولة</button></div>';
+                return; // إيقاف العمليات فوراً
             }
             // ===============================================
 
-            // إذا كان المفتاح صحيحاً، استمر بفك التشفير وعرض البيانات
             allReportsData = result.reports.map(rep => ({
                 ...rep,
                 tasks: decryptAES(rep.tasks, adminKey),
@@ -454,7 +447,9 @@ function getAdminKey() {
             if(result.message.includes('جلسة')) logout(); 
         }
     } catch (error) { 
-        if(!silent) showToast('خطأ بالخادم.', 'error'); 
+        if (error.message !== "لم يتم إدخال المفتاح" && !silent) {
+            showToast('خطأ بالخادم.', 'error'); 
+        }
     }
 }
         function renderTracking(depts) {
