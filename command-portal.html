@@ -111,7 +111,10 @@
                 <span id="admin-name">جاري التحميل...</span>
             </div>
         </div>
-        <button class="btn-logout" onclick="logout()">خروج</button>
+       <div style="display: flex; gap: 10px; align-items: center;">
+    <button onclick="sessionStorage.removeItem('adminSecretKey'); location.reload();" style="background-color: #E63946; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: var(--font-body); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔑 تغيير المفتاح</button>
+    <button class="btn-logout" onclick="logout()">خروج</button>
+</div>
     </header>
 
     <div class="container">
@@ -422,14 +425,6 @@ function getAdminKey() {
             document.getElementById('archived-reports').innerText = allReportsData.filter(r => r.status === 'مؤرشف').length;
             renderTracking(result.departmentsStatus); 
             applyFilters();
-
-            // إضافة زر (تغيير المفتاح) في الأعلى لتسهيل العمل
-            if (!document.getElementById('resetKeyBtn')) {
-                const headerRight = document.querySelector('.header-right');
-                if (headerRight) {
-                    headerRight.innerHTML += `<button id="resetKeyBtn" onclick="resetAdminKey()" style="background:#E63946; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer; font-family:inherit; font-weight:bold; margin-right:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔑 تغيير المفتاح</button>`;
-                }
-            }
 
         } else { 
             showToast(result.message, 'error'); 
