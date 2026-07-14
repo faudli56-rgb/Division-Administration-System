@@ -308,33 +308,62 @@
         // ====== دوال الإرسال ======
 
         document.getElementById('reportForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn'); btn.innerHTML = 'جاري التشفير والإرسال... ⏳'; btn.disabled = true;
+    e.preventDefault();
 
-            const rawPayload = {
-                hijriDate: document.getElementById('hijriDate').value, jobTitle: userData.jobTitle,
-                tasks: document.getElementById('tasks').value, movements: document.getElementById('movements').value,
-                incidents: document.getElementById('incidents').value, visits: document.getElementById('visits').value,
-                demands: document.getElementById('demands').value, notes: document.getElementById('notes').value,
-                humanLosses: humanLossesArray, materialLosses: materialLossesArray
-            };
-            
-            const encryptedPayload = btoa(unescape(encodeURIComponent(JSON.stringify(rawPayload))));
+    // طلب مفتاح التشفير من المندوب
+    const secretKey = prompt("🔒 النظام مشفر: أدخل مفتاح التشفير السري لإرسال التقرير:");
+    if (!secretKey) {
+        showToast("تم إلغاء الإرسال: يجب إدخال مفتاح التشفير", "error");
+        return;
+    }
 
-            try {
-                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'submitReport', token: token, payload: encryptedPayload }) });
-                const result = await response.json();
-                if (result.status === 'success') { 
-                    isSubmitted = true;
-                    document.getElementById('time-alert').style.display = 'none';
-                    document.getElementById('form-container').style.display = 'none'; 
-                    document.getElementById('success-screen').style.display = 'block'; 
-                    window.scrollTo(0, 0); 
-                } 
-                else { showToast(result.message, 'error'); btn.innerHTML = '📤 إرسال التقرير النهائي'; btn.disabled = false; if(result.message.includes('جلسة')) setTimeout(logout, 2000); }
-            } catch (error) { showToast('حدث خطأ في الاتصال.', 'error'); btn.innerHTML = '📤 إرسال التقرير النهائي'; btn.disabled = false; }
-        });
+    const btn = document.getElementById('submitBtn'); 
+    btn.innerHTML = 'جاري التشفير العميق والإرسال... ⏳'; 
+    btn.disabled = true;
 
+    // دوال التشفير
+    const encryptAES = (text) => text ? CryptoJS.AES.encrypt(text, secretKey).toString() : '';
+    const encryptArray = (arr) => arr.map(item => {
+        let encryptedItem = {};
+        for (let key in item) { encryptedItem[key] = encryptAES(item[key]); }
+        return encryptedItem;
+    });
+
+    const rawPayload = {
+        hijriDate: document.getElementById('hijriDate').value, 
+        jobTitle: userData.jobTitle,
+        tasks: encryptAES(document.getElementById('tasks').value), 
+        movements: encryptAES(document.getElementById('movements').value),
+        incidents: encryptAES(document.getElementById('incidents').value), 
+        visits: encryptAES(document.getElementById('visits').value),
+        demands: encryptAES(document.getElementById('demands').value), 
+        notes: encryptAES(document.getElementById('notes').value),
+        humanLosses: encryptArray(humanLossesArray), 
+        materialLosses: encryptArray(materialLossesArray)
+    };
+
+    const encryptedPayload = btoa(unescape(encodeURIComponent(JSON.stringify(rawPayload))));
+
+    try {
+        const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'submitReport', token: token, payload: encryptedPayload }) });
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            isSubmitted = true;
+            document.getElementById('time-alert').style.display = 'none';
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('success-screen').style.display = 'block';
+            window.scrollTo(0, 0);
+        } else {
+            showToast(result.message, 'error');
+            btn.innerHTML = '📤 إرسال التقرير النهائي'; btn.disabled = false;
+            if(result.message.includes('جلسة')) setTimeout(logout, 2000);
+        }
+    } catch (error) {
+        showToast('حدث خطأ في الاتصال.', 'error');
+        btn.innerHTML = '📤 إرسال التقرير النهائي'; btn.disabled = false;
+    }
+});
         async function submitAchievement() {
             const title = document.getElementById('ach_title').value.trim();
             const desc = document.getElementById('ach_desc').value.trim();
