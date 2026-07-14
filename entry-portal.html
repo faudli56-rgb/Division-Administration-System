@@ -307,10 +307,15 @@
 
         // ====== دوال الإرسال ======
 
-        document.getElementById('reportForm').addEventListener('submit', async (e) => {
+       document.getElementById('reportForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    // التأكد من تحميل مكتبة التشفير
+    if (typeof CryptoJS === 'undefined') {
+        showToast("خطأ: لم يتم تحميل نظام التشفير. تأكد من اتصال الإنترنت أو تحديث الصفحة.", "error");
+        return;
+    }
 
-    // طلب مفتاح التشفير من المندوب
     const secretKey = prompt("🔒 النظام مشفر: أدخل مفتاح التشفير السري لإرسال التقرير:");
     if (!secretKey) {
         showToast("تم إلغاء الإرسال: يجب إدخال مفتاح التشفير", "error");
@@ -321,30 +326,29 @@
     btn.innerHTML = 'جاري التشفير العميق والإرسال... ⏳'; 
     btn.disabled = true;
 
-    // دوال التشفير
-    const encryptAES = (text) => text ? CryptoJS.AES.encrypt(text, secretKey).toString() : '';
-    const encryptArray = (arr) => arr.map(item => {
-        let encryptedItem = {};
-        for (let key in item) { encryptedItem[key] = encryptAES(item[key]); }
-        return encryptedItem;
-    });
-
-    const rawPayload = {
-        hijriDate: document.getElementById('hijriDate').value, 
-        jobTitle: userData.jobTitle,
-        tasks: encryptAES(document.getElementById('tasks').value), 
-        movements: encryptAES(document.getElementById('movements').value),
-        incidents: encryptAES(document.getElementById('incidents').value), 
-        visits: encryptAES(document.getElementById('visits').value),
-        demands: encryptAES(document.getElementById('demands').value), 
-        notes: encryptAES(document.getElementById('notes').value),
-        humanLosses: encryptArray(humanLossesArray), 
-        materialLosses: encryptArray(materialLossesArray)
-    };
-
-    const encryptedPayload = btoa(unescape(encodeURIComponent(JSON.stringify(rawPayload))));
-
     try {
+        const encryptAES = (text) => text ? CryptoJS.AES.encrypt(text, secretKey).toString() : '';
+        const encryptArray = (arr) => arr.map(item => {
+            let encryptedItem = {};
+            for (let key in item) { encryptedItem[key] = encryptAES(item[key]); }
+            return encryptedItem;
+        });
+
+        const rawPayload = {
+            hijriDate: document.getElementById('hijriDate').value, 
+            jobTitle: userData.jobTitle,
+            tasks: encryptAES(document.getElementById('tasks').value), 
+            movements: encryptAES(document.getElementById('movements').value),
+            incidents: encryptAES(document.getElementById('incidents').value), 
+            visits: encryptAES(document.getElementById('visits').value),
+            demands: encryptAES(document.getElementById('demands').value), 
+            notes: encryptAES(document.getElementById('notes').value),
+            humanLosses: encryptArray(humanLossesArray || []), 
+            materialLosses: encryptArray(materialLossesArray || [])
+        };
+
+        const encryptedPayload = btoa(unescape(encodeURIComponent(JSON.stringify(rawPayload))));
+
         const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'submitReport', token: token, payload: encryptedPayload }) });
         const result = await response.json();
         
@@ -357,10 +361,10 @@
         } else {
             showToast(result.message, 'error');
             btn.innerHTML = '📤 إرسال التقرير النهائي'; btn.disabled = false;
-            if(result.message.includes('جلسة')) setTimeout(logout, 2000);
         }
     } catch (error) {
-        showToast('حدث خطأ في الاتصال.', 'error');
+        console.error(error);
+        showToast('حدث خطأ فني أثناء التشفير أو الاتصال.', 'error');
         btn.innerHTML = '📤 إرسال التقرير النهائي'; btn.disabled = false;
     }
 });
